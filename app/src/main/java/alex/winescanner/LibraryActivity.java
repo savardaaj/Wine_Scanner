@@ -17,11 +17,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -138,12 +140,25 @@ public class LibraryActivity extends AppCompatActivity
     public void loadWineReviews() {
         Log.d("***Debug***", "inside loadWineReviews");
 
+        //redraw
+        LayoutInflater inflater = LayoutInflater.from(this);
+        ScrollView scrollView = findViewById(R.id.content_library);
+        LinearLayout scrollContainer = findViewById(R.id.content_library_container);
+        scrollContainer.removeAllViews();
+
          for(WineReview wr : wineReviewArrayList) {
              //setup layout stuff
-             LayoutInflater inflater = LayoutInflater.from(this);
-             ScrollView scrollView = findViewById(R.id.content_library);
-             LinearLayout scrollContainer = findViewById(R.id.content_library_container);
+
              View wineCard= inflater.inflate(R.layout.wine_card_component, null, false);
+
+             wineCard.setTag(wr);
+
+             TextView remove = (TextView) wineCard.findViewById(R.id.tvRemove);
+             remove.setOnClickListener(new View.OnClickListener() {
+                 public void onClick(View v) {
+                     onWineCardRemove(v);
+                 }
+             });
 
              //initialize the layout fields
              TextView wineName = (TextView) wineCard.findViewById(R.id.tvWineName);
@@ -163,7 +178,6 @@ public class LibraryActivity extends AppCompatActivity
          }
 
     }
-
 
     public void testloadWineReviews() {
         Log.d("***Debug***", "inside testloadWineReviews");
@@ -191,8 +205,19 @@ public class LibraryActivity extends AppCompatActivity
         scrollView.addView(wineCard);
     }
 
-    public void onWineCardRemoved() {
+    public void onWineCardRemove(View v) {
         //delete wine card from arraylist and from layout
         //show toast to undo action
+        ViewGroup wineCard = (ViewGroup) v.getParent();
+        for(WineReview wr : wineReviewArrayList) {
+            if(wr == wineCard.getTag()) {
+                wineReviewArrayList.remove(wr);
+                Toast.makeText(this, "Removed " + wr.getWineName(),
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+        ((ViewManager)wineCard.getParent()).removeView(wineCard);
+
+
     }
 }

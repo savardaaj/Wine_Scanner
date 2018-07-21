@@ -2,6 +2,7 @@ package alex.winescanner;
 
 import android.media.Image;
 import android.media.Rating;
+import android.view.View;
 import android.widget.RatingBar;
 
 import java.util.UUID;
@@ -16,10 +17,10 @@ public class WineReview {
     private Image wineImage;
     private String wineDescription;
     private float rating;
-    String id;
+    int id;
 
     public WineReview() {
-
+        this.id = View.generateViewId();
     }
 
     public WineReview(String wineName, String wineMaker, String wineType, String wineYear,
@@ -34,10 +35,10 @@ public class WineReview {
         this.rating = rating;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -107,7 +108,7 @@ public class WineReview {
 
     public WineReview createTestWineReview() {
         WineReview wr = new WineReview();
-        wr.id = UUID.randomUUID().toString();
+        wr.id = View.generateViewId();
         wr.wineName = "test Wine Name";
         wr.wineMaker = "Winery Name";
         wr.wineDescription = "A shitty red";
