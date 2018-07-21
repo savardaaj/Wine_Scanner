@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tvIntroduction"
+        android:layout_width="313dp"
+        android:layout_height="76dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorModalBox1"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingTop="5dp"
+        android:text="Compare wines by taking a picture of each one you are interested in. Press the button below to begin.  "
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnScanBarcode"
+        android:layout_width="183dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:height="10dp"
+        android:background="@color/colorGreenButton"
+        android:onClick="scanBarcodes"
+        android:text="@string/barcode_compare"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/btnTakePicture"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvIntroduction" />
+
+    <Button
+        android:id="@+id/btnTakePicture"
+        android:layout_width="183dp"
+        android:layout_height="wrap_content"
+        android:height="10dp"
+        android:background="@color/colorGreenButton"
+        android:onClick="startCamera"
+        android:text="@string/picture_compare"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.498" />
+
+    <Button
+        android:id="@+id/btnLibrary"
+        android:layout_width="183dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:height="10dp"
+        android:background="@color/colorGreenButton"
+        android:onClick="viewLibrary"
+        android:text="@string/nav_library"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTakePicture"
+        app:layout_constraintVertical_bias="0.189" />
+
+</android.support.constraint.ConstraintLayout>
