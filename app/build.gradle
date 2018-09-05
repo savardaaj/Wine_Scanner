@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "alex.winescanner"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -30,8 +30,16 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.5'
 
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-firestore:17.0.4'
+    implementation 'com.google.firebase:firebase-database:16.0.1'
+    implementation 'com.google.firebase:firebase-auth:16.0.2'
+
+
     implementation 'com.journeyapps:zxing-android-embedded:2.0.1@aar'
     implementation 'com.journeyapps:zxing-android-legacy:2.0.1@aar'
     implementation 'com.journeyapps:zxing-android-integration:2.0.1@aar'
     implementation 'com.google.zxing:core:3.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

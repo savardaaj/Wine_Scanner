@@ -24,12 +24,15 @@
             android:label="@string/title_activity_review_selection_screen"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BarcodeScanner" />
-        <activity android:name=".LibraryActivity"
+        <activity
+            android:name=".LibraryActivity"
             android:label="@string/title_activity_library"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".NewWineEntryActivity">
-
-        </activity>
+        <activity android:name=".NewWineEntryActivity"></activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

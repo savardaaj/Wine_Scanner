@@ -341,4 +341,9 @@ public class AndroidCameraApi extends AppCompatActivity {
         stopBackgroundThread();
         super.onPause();
     }
+
+    //Intent intent = new Intent(this, LibraryActivity.class);
+    //            intent.putExtra("wineReviewJSON", wineReviewJSON);
+    //            setResult(RESULT_OK, intent);
+    //super.finish()
 }

@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="145dp"
             android:background="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +75,8 @@
             android:stepSize=".5"
             app:layout_constraintBottom_toTopOf="@+id/tvWine_Desc"
             app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
-            app:layout_constraintTop_toBottomOf="@+id/tvWineName" />
+            app:layout_constraintTop_toBottomOf="@+id/tvWineName"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/tvWine_Desc"
@@ -88,69 +90,69 @@
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="@+id/view"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.157"
             app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
             app:layout_constraintTop_toTopOf="@+id/view"
-            app:layout_constraintVertical_bias="0.79" />
-
-        <TextView
-            android:id="@+id/tvSee_Reviews"
-            android:layout_width="wrap_content"
-            android:layout_height="19dp"
-            android:layout_alignEnd="@+id/tvWine_Desc"
-            android:layout_alignTop="@+id/tvDetails"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/colorAccent"
-            android:elevation="30dp"
-            android:text="@string/see_reviews"
-            android:textColor="@color/colorGreenButton"
-            app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
-            app:layout_constraintTop_toBottomOf="@+id/tvWine_Desc"
-            app:layout_constraintVertical_bias="0.384" />
+            app:layout_constraintVertical_bias="0.7" />
 
         <TextView
             android:id="@+id/tvChoose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="57dp"
+            android:layout_height="22dp"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@+id/tvSee_Reviews"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:backgroundTint="@color/colorAccent"
             android:elevation="30dp"
             android:text="@string/choose"
             android:textColor="@color/colorGreenButton"
-            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.96"
-            app:layout_constraintStart_toEndOf="@+id/tvSee_Reviews"
-            app:layout_constraintTop_toBottomOf="@+id/tvWine_Desc" />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/tvDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="64dp"
+            android:layout_height="22dp"
             android:layout_alignParentTop="true"
             android:layout_alignStart="@+id/tvWineName"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"
             android:backgroundTint="@color/colorAccent"
             android:elevation="30dp"
             android:text="@string/details"
             android:textColor="@color/colorGreenButton"
             app:layout_constraintBottom_toBottomOf="@+id/view"
-            app:layout_constraintEnd_toStartOf="@+id/tvSee_Reviews"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.034"
             app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
-            app:layout_constraintTop_toBottomOf="@+id/tvWine_Desc"
-            app:layout_constraintVertical_bias="0.32999998" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/tvEdit"
+            android:layout_width="60dp"
+            android:layout_height="22dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignStart="@+id/tvWineName"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/colorAccent"
+            android:elevation="30dp"
+            android:onClick="onWineCardEdit"
+            android:text="@string/edit"
+            android:textColor="@color/colorGreenButton"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            tools:text="    Edit" />
 
         <TextView
             android:id="@+id/tvWine_Source"
@@ -175,10 +177,10 @@
 
         <TextView
             android:id="@+id/tvRemove"
-            android:layout_width="wrap_content"
+            android:layout_width="23dp"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:text="X"
+            android:text=" X"
             android:textColor="@color/colorAccent"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/view"
@@ -216,7 +218,7 @@
             android:textSize="10sp"
             app:layout_constraintBottom_toTopOf="@+id/tvWine_Desc"
             app:layout_constraintEnd_toStartOf="@+id/tvWinePoints"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toEndOf="@+id/ratingBar"
             app:layout_constraintTop_toBottomOf="@+id/tvWineName"
             app:layout_constraintVertical_bias="0.6" />

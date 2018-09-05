@@ -18,6 +18,7 @@ public class WineReview {
     private String wineDescription;
     private float rating;
     int id;
+    String docId;
 
     public WineReview() {
         this.id = View.generateViewId();
@@ -31,7 +32,7 @@ public class WineReview {
         this.wineYear = wineYear;
         this.wineLocation = wineLocation;
         this.wineImage = wineImage;
-        this. wineDescription = wineDescription;
+        this.wineDescription = wineDescription;
         this.rating = rating;
     }
 
@@ -40,6 +41,14 @@ public class WineReview {
     }
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDocId() {
+        return docId;
+    }
+
+    public void setDocId(String docId) {
+        this.docId = docId;
     }
 
     public String getWineName() {

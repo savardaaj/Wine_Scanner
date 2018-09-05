@@ -108,6 +108,26 @@
         tools:layout_editor_absoluteX="191dp" />
 
     <TextView
+        android:id="@+id/tvEdit"
+        android:layout_width="60dp"
+        android:layout_height="22dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/tvWineName"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/colorAccent"
+        android:elevation="30dp"
+        android:onClick="onWineCardEdit"
+        android:text="@string/edit"
+        android:textColor="@color/colorGreenButton"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="    Edit" />
+
+    <TextView
         android:id="@+id/tvChoose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
