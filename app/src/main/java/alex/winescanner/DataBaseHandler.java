@@ -27,21 +27,25 @@ public class DataBaseHandler {
 
         // Create a new user with a first and last name
         final Map<String, Object> wineReview = new HashMap<>();
-        wineReview.put("Name", wr.getWineName());
-        wineReview.put("Maker", wr.getWineMaker());
-        wineReview.put("Type", wr.getWineType());
-        wineReview.put("Location", wr.getWineLocation());
-        wineReview.put("Description", wr.getWineDescription());
-        wineReview.put("Image", wr.getWineImage());
-        wineReview.put("Rating", wr.getRating());
+        wineReview.put("id", wr.getId());
+        wineReview.put("name", wr.name);
+        wineReview.put("maker", wr.maker);
+        wineReview.put("type", wr.type);
+        wineReview.put("year", wr.year);
+        wineReview.put("location", wr.location);
+        wineReview.put("description", wr.description);
+        wineReview.put("image", wr.image);
+        wineReview.put("rating", wr.rating);
 
         // Add a new document with a generated ID
-        db.collection("users")
+        db.collection("WineReviews")
             .add(wineReview)
             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
                     Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                    //Store the docReference
+
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
@@ -52,10 +56,10 @@ public class DataBaseHandler {
         });
     }
 
-    public void removeWineReview(WineReview wineReview, FirebaseFirestore db) {
+    public void deleteWineReview(WineReview wineReview, FirebaseFirestore db) {
 
         // Add a new document with a generated ID
-        db.collection("winereviews").document(wineReview.docId)
+        db.collection("WineReviews").document(wineReview.docId)
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -69,30 +73,44 @@ public class DataBaseHandler {
                         Log.w(TAG, "Error deleting document", e);
                     }
                 });
-
     }
 
-    public ArrayList<WineReview> getWineReviews(FirebaseFirestore db) {
+    public void updateWineReview(WineReview wr, FirebaseFirestore db) {
+        Log.d("***Debug***", "inside updateWineReview");
+        // Create a new user with a first and last name
+        final Map<String, Object> wineReview = new HashMap<>();
 
-        final ArrayList<WineReview> wineReviewList = new ArrayList<WineReview>();
-        db.collection("winereviews")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
+        try {
+            wineReview.put("id", wr.id);
+            wineReview.put("name", wr.name);
+            wineReview.put("maker", wr.maker);
+            wineReview.put("type", wr.type);
+            wineReview.put("year", wr.year);
+            wineReview.put("location", wr.location);
+            wineReview.put("description", wr.description);
+            wineReview.put("image", wr.image);
+            wineReview.put("rating", wr.rating);
 
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                WineReview wr = (WineReview) document.getData();
-                                wineReviewList.add(wr);
-                            }
-                        } else {
-                            Log.w(TAG, "Error getting documents.", task.getException());
+            // Add a new document with a generated ID
+            db.collection("WineReviews").document(wr.docId)
+                    .update(wineReview)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("***Debug***", "DocumentSnapshot successfully updated!");
                         }
-                    }
-                });
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("***Debug***", "Error updating document", e);
+                        }
+                    });
+        }
+        catch (Exception e) {
+            Log.w("***Debug***", "Error updating document", e);
+        }
 
-        return wineReviewList;
     }
+
 }

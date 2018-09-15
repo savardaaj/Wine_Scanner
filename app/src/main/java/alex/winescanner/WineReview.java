@@ -9,40 +9,41 @@ import java.util.UUID;
 
 public class WineReview {
 
-    private String wineName;
-    private String wineMaker;
-    private String wineType;
-    private String wineYear;
-    private String wineLocation;
-    private Image wineImage;
-    private String wineDescription;
-    private float rating;
-    int id;
-    String docId;
+    public String name;
+    public String maker;
+    public String type;
+    public String year;
+    public String location;
+    public String image;
+    public String description;
+    public float rating;
+    public String id;
+    public String docId;
 
     public WineReview() {
-        this.id = View.generateViewId();
+        this.id = UUID.randomUUID().toString();
     }
 
     public WineReview(String wineName, String wineMaker, String wineType, String wineYear,
-                      String wineLocation, Image wineImage, String wineDescription, float rating) {
-        this.wineName = wineName;
-        this.wineMaker = wineMaker;
-        this.wineType = wineType;
-        this.wineYear = wineYear;
-        this.wineLocation = wineLocation;
-        this.wineImage = wineImage;
-        this.wineDescription = wineDescription;
-        this.rating = rating;
+                      String wineLocation, String wineImage, String wineDescription, float wineRating) {
+        this.name = wineName;
+        this.maker = wineMaker;
+        this.type = wineType;
+        this.year = wineYear;
+        this.location = wineLocation;
+        this.image = wineImage;
+        this.description = wineDescription;
+        this.rating = wineRating;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
+    /*
     public String getDocId() {
         return docId;
     }
@@ -56,7 +57,7 @@ public class WineReview {
     }
 
     public String getWineMaker() {
-        return wineMaker;
+        return maker;
     }
 
     public String getWineType() {
@@ -99,8 +100,8 @@ public class WineReview {
         this.wineLocation = wineLocation;
     }
 
-    public void setWineMaker(String wineMaker) {
-        this.wineMaker = wineMaker;
+    public void setmaker(String maker) {
+        this.maker = maker;
     }
 
     public void setWineName(String wineName) {
@@ -115,15 +116,16 @@ public class WineReview {
         this.wineYear = wineYear;
     }
 
+*/
     public WineReview createTestWineReview() {
         WineReview wr = new WineReview();
-        wr.id = View.generateViewId();
-        wr.wineName = "test Wine Name";
-        wr.wineMaker = "Winery Name";
-        wr.wineDescription = "A shitty red";
-        wr.wineType = "red";
-        wr.wineYear = "2018";
-        wr.wineLocation = "Nappa Falley";
+        wr.id = UUID.randomUUID().toString();
+        wr.name = "test Wine Name";
+        wr.maker = "Winery Name";
+        wr.description = "A shitty red";
+        wr.type = "red";
+        wr.year = "2018";
+        wr.location = "Nappa Falley";
         wr.rating = 2;
         return wr;
     }
