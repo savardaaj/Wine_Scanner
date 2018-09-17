@@ -2,13 +2,13 @@ package alex.winescanner;
 
 import android.content.Context;
 import android.content.Intent;
-import android.icu.util.RangeValueIterator;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.renderscript.Element;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +25,6 @@ import android.view.ViewManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,15 +37,15 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 
-import org.w3c.dom.Text;
-
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static android.support.constraint.Constraints.TAG;
@@ -54,10 +53,14 @@ import static android.support.constraint.Constraints.TAG;
 public class LibraryActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    final Context ctx = this;
+
     private Gson gson;
     private ArrayList<WineReview> wineReviewArrayList;
     private static int NEW_WR = 1;
     private static int EDIT_WR = 2;
+    private StorageReference storageRef;
+
     FirebaseFirestore fs;
     DataBaseHandler dbh;
 
@@ -70,6 +73,7 @@ public class LibraryActivity extends AppCompatActivity
         dbh = new DataBaseHandler();
 
         fs = FirebaseFirestore.getInstance();
+        storageRef = FirebaseStorage.getInstance().getReference();
         setContentView(R.layout.activity_library);
 
         wineReviewArrayList = new ArrayList<>();
@@ -97,21 +101,20 @@ public class LibraryActivity extends AppCompatActivity
         if (resultCode == RESULT_OK) {
             Log.d("***Debug***", "onActivityResult: result Code: " + resultCode);
             Log.d("***Debug***", "onActivityResult: request Code: " + requestCode);
-            String wineReviewJSON = (String) data.getStringExtra("wineReviewJSON");
+            String wineReviewJSON = data.getStringExtra("wineReviewJSON");
             if (wineReviewJSON != null) {
                 WineReview wineReview = new Gson().fromJson(wineReviewJSON, WineReview.class);
                 if (requestCode == NEW_WR) {
-                    Log.d("***Debug***", "new wine review");
                     wineReviewArrayList.add(wineReview);
-                    addWineReview(wineReview, fs);
+                    uploadFile(wineReview);
+                    createWineReview(wineReview, fs);
                 }
                 else if (requestCode == EDIT_WR) {
-                    Log.d("***Debug***", "EDIT WineReview: " + wineReview);
                     for(WineReview wr : wineReviewArrayList) {
                         if(wr.id.equals(wineReview.id)) {
                             wineReviewArrayList.set(wineReviewArrayList.indexOf(wr), wineReview);
 
-                            dbh.updateWineReview(wineReview, fs);
+                            updateWineReview(wineReview, fs);
                             break;
                         }
 
@@ -138,7 +141,7 @@ public class LibraryActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d("***Debug***", "inside LibraryActivity: onCreateOptionsMenu");
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.library, menu);
+        getMenuInflater().inflate(R.menu.menu_library, menu);
         return true;
     }
 
@@ -186,17 +189,23 @@ public class LibraryActivity extends AppCompatActivity
         return true;
     }
 
+
     //Create the card to go in the list for display
-    public void addWineReview(WineReview wr) {
-        Log.d("***Debug***", "inside LibraryActivity: addWineReview");
-        //redraw
+    /**
+     * Used when restoring a wine review from deletion
+     *
+     */
+    public void reAddWineReview(WineReview wr) {
+        Log.d("***Debug***", "inside LibraryActivity: reAddWineReview");
+        //Establish layout
         LayoutInflater inflater = LayoutInflater.from(this);
         LinearLayout scrollContainer = findViewById(R.id.content_library_container);
-
         View wineCard = inflater.inflate(R.layout.wine_card_component, null, false);
 
+        //add tag for data matching to pick out of list
         wineCard.setTag(wr);
 
+        //add the remove card listener
         TextView remove = (TextView) wineCard.findViewById(R.id.tvRemove);
         remove.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -205,21 +214,21 @@ public class LibraryActivity extends AppCompatActivity
         });
 
         //initialize the layout fields
-        TextView wineName = (TextView) wineCard.findViewById(R.id.tvWineName);
-        RatingBar wineRating = (RatingBar) wineCard.findViewById(R.id.ratingBar);
-        TextView wineDesc = (TextView) wineCard.findViewById(R.id.tvWine_Desc);
+        TextView wineName = wineCard.findViewById(R.id.tvWineName);
+        RatingBar wineRating = wineCard.findViewById(R.id.ratingBar);
+        TextView wineDesc = wineCard.findViewById(R.id.tvWine_Desc);
 
-        //TODO: Implement adding a picture
-        ImageView winePicture = (ImageView) wineCard.findViewById(R.id.ivWine_Picture);
 
-        //TODO: Implement rating system
-        TextView wineRatingCount = (TextView) wineCard.findViewById(R.id.tvRatingsCount);
-        TextView winePts = (TextView) wineCard.findViewById(R.id.tvWinePoints);
-        TextView wineRatingSource = (TextView) wineCard.findViewById(R.id.tvWine_Source);
+        ImageView winePicture = wineCard.findViewById(R.id.ivWine_Picture);
+
+        //TODO: Implement community rating system
+        TextView wineRatingCount = wineCard.findViewById(R.id.tvRatingsCount);
+        TextView winePts = wineCard.findViewById(R.id.tvWinePoints);
+        TextView wineRatingSource = wineCard.findViewById(R.id.tvWine_Source);
 
         //set values for winecard layout fields
-        String winetitle = wr.name + " - " + wr.maker;
-        wineName.setText(winetitle);
+        String wineTitle = wr.name + " - " + wr.maker;
+        wineName.setText(wineTitle);
         wineRating.setRating(wr.rating);
         wineDesc.setText(wr.description);
 
@@ -228,18 +237,25 @@ public class LibraryActivity extends AppCompatActivity
         winePts.setText("");
         wineRatingSource.setText("");
 
-        //TODO: implement picture system
-        //winePicture.setImageDrawable();
+        winePicture.setImageDrawable(new BitmapDrawable(getResources(), wr.imageBitmap));
 
         //add wineCard to the scroll view
         scrollContainer.addView(wineCard);
 
-        dbh.addWineReview(wr, fs);
+        //create the review for cloud database
+        createWineReview(wr, fs);
+
+        //sort and add to local list
+
         wineReviewArrayList.add(wr);
+        loadWineReviews();
     }
 
     public void loadWineReviews() {
         Log.d("***Debug***", "inside loadWineReviews");
+
+        File pictureFile;
+        Bitmap myBitmap;
 
         //redraw view
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -249,12 +265,19 @@ public class LibraryActivity extends AppCompatActivity
         wineReviewArrayList = sortByRatingDescending(wineReviewArrayList);
 
         for(WineReview wr : wineReviewArrayList) {
+
+            if(wr.filePath != null) {
+                pictureFile = new File(wr.filePath);
+                myBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
+                wr.imageBitmap = myBitmap;
+            }
+
             //setup layout stuff
             View wineCard = inflater.inflate(R.layout.wine_card_component, null, false);
             wineCard.setPadding(0,0,0, 10);
             wineCard.setTag(wr);
 
-            TextView remove = (TextView) wineCard.findViewById(R.id.tvRemove);
+            TextView remove = wineCard.findViewById(R.id.tvRemove);
             remove.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     onWineCardRemove(v);
@@ -262,15 +285,15 @@ public class LibraryActivity extends AppCompatActivity
             });
 
             //initialize the layout fields
-            TextView wineName = (TextView) wineCard.findViewById(R.id.tvWineName);
-            ImageView winePicture = (ImageView) wineCard.findViewById(R.id.ivWine_Picture);
-            RatingBar wineRating = (RatingBar) wineCard.findViewById(R.id.ratingBar);
-            TextView wineDesc = (TextView) wineCard.findViewById(R.id.tvWine_Desc);
+            TextView wineName = wineCard.findViewById(R.id.tvWineName);
+            ImageView winePicture = wineCard.findViewById(R.id.ivWine_Picture);
+            RatingBar wineRating = wineCard.findViewById(R.id.ratingBar);
+            TextView wineDesc =  wineCard.findViewById(R.id.tvWine_Desc);
 
             //TODO: Implement rating system
-            TextView wineRatingCount = (TextView) wineCard.findViewById(R.id.tvRatingsCount);
-            TextView winePts = (TextView) wineCard.findViewById(R.id.tvWinePoints);
-            TextView wineRatingSource = (TextView) wineCard.findViewById(R.id.tvWine_Source);
+            TextView wineRatingCount = wineCard.findViewById(R.id.tvRatingsCount);
+            TextView winePts = wineCard.findViewById(R.id.tvWinePoints);
+            TextView wineRatingSource = wineCard.findViewById(R.id.tvWine_Source);
 
             //set values for layout fields
             String wineTitle = wr.name + " - " + wr.maker;
@@ -285,39 +308,12 @@ public class LibraryActivity extends AppCompatActivity
             winePts.setText("");
             wineRatingSource.setText("");
 
-            //TODO: picture: implement picture system
-            //winePicture.setImageDrawable();
+            winePicture.setImageDrawable(new BitmapDrawable(getResources(), wr.imageBitmap));
 
             //add wine card to scroll view
             scrollContainer.addView(wineCard);
         }
 
-    }
-
-    public void testloadWineReviews() {
-        Log.d("***Debug***", "inside testloadWineReviews");
-
-        //display a test wine review, no db
-        WineReview wr = new WineReview();
-        wr = wr.createTestWineReview();
-
-        LayoutInflater inflater = LayoutInflater.from(this);
-        ScrollView scrollView = findViewById(R.id.content_library);
-        View wineCard = inflater.inflate(R.layout.wine_card_component, null, false);
-
-        TextView wineName = (TextView) wineCard.findViewById(R.id.tvWineName);
-        ImageView winePicture = (ImageView) wineCard.findViewById(R.id.ivWine_Picture);
-        RatingBar wineRating = (RatingBar) wineCard.findViewById(R.id.ratingBar);
-        TextView wineDesc = (TextView) wineCard.findViewById(R.id.tvWine_Desc);
-
-        String winetitle = wr.name + " - " + wr.maker;
-        //set values of imported components
-        wineName.setText(winetitle);
-        //winePicture.setImageDrawable();
-        wineRating.setRating(wr.rating);
-        wineDesc.setText(wr.description);
-
-        scrollView.addView(wineCard);
     }
 
     public void onWineCardRemove(View v) {
@@ -327,12 +323,10 @@ public class LibraryActivity extends AppCompatActivity
 
         try {
             ViewGroup wineCard = (ViewGroup) v.getParent();
-            int wineCardId = wineCard.getId();
             for (WineReview wr : wineReviewArrayList) {
                 if (wr == wineCard.getTag()) {
                     indexToRemove = wineReviewArrayList.indexOf(wr);
                     ((ViewManager) wineCard.getParent()).removeView(wineCard);
-                    //dbh.removeWineReview(wr, fs);
                     String message = "Removed " + wr.name;
 
                     showSnackBar(findViewById(R.id.content_library_container), message, 7000, wr);
@@ -345,7 +339,7 @@ public class LibraryActivity extends AppCompatActivity
 
         }
         if(indexToRemove != 999) {
-            dbh.deleteWineReview(wineReviewArrayList.get(indexToRemove), fs);
+            deleteWineReview(wineReviewArrayList.get(indexToRemove), fs);
             wineReviewArrayList.remove(indexToRemove);
 
         }
@@ -368,8 +362,7 @@ public class LibraryActivity extends AppCompatActivity
     public void restoreWineReview(WineReview wr) {
         Log.d("***Debug***", "inside LibraryActivity: restoreWineReview");
         wineReviewArrayList.add(wr);
-        addWineReview(wr);
-        dbh.addWineReview(wr, fs);
+        reAddWineReview(wr);
     }
 
     public ArrayList<WineReview> sortByRatingDescending(ArrayList<WineReview> wineReviewArrayList) {
@@ -378,7 +371,7 @@ public class LibraryActivity extends AppCompatActivity
         Object[] wrArray = wineReviewArrayList.toArray();
         ArrayList<WineReview> sortedArrayList = new ArrayList<WineReview>();
 
-        WineReview temp = new WineReview();
+        WineReview temp;
 
         //sort descending based on highest rating
         for(int j = 0; j < wrArray.length; j++) {
@@ -408,16 +401,12 @@ public class LibraryActivity extends AppCompatActivity
     public void onWineCardEdit(View v) {
         Log.d("***Debug***", "inside LibraryActivity: onWineCardEdit");
 
-        int indexToEdit = 999;
-
         try {
             ViewGroup wineCard = (ViewGroup) v.getParent();
-            int wineCardId = wineCard.getId();
             for (WineReview wr : wineReviewArrayList) {
                 if (wr == wineCard.getTag()) {
                     Gson gson = new Gson();
                     String wineReviewJSON = gson.toJson(wr);
-                    indexToEdit = wineReviewArrayList.indexOf(wr);
                     Intent intent = new Intent(this, NewWineEntryActivity.class);
                     intent.putExtra("edit", wineReviewJSON);
                     startActivityForResult(intent, EDIT_WR);
@@ -427,14 +416,32 @@ public class LibraryActivity extends AppCompatActivity
             Log.d("***ERROR***", "onWineCardRemove: " + e.getMessage());
             Log.d("***ERROR***", "onWineCardRemove: " + e);
             Toast.makeText(this, "Error Occurred", Toast.LENGTH_SHORT).show();
-
         }
+    }
 
+    public void onWineCardDetails(View v) {
+        Log.d("***Debug***", "inside LibraryActivity: onWineCardDetails");
+
+        try {
+            ViewGroup wineCard = (ViewGroup) v.getParent();
+            for (WineReview wr : wineReviewArrayList) {
+                if (wr == wineCard.getTag()) {
+                    Gson gson = new Gson();
+                    String wineReviewJSON = gson.toJson(wr);
+                    Intent intent = new Intent(this, CardDetailsActivity.class);
+                    intent.putExtra("edit", wineReviewJSON);
+                    //startActivityForResult(intent, EDIT_WR);
+                    startActivity(intent);
+                }
+            }
+        } catch(Exception e) {
+            Log.d("***ERROR***", "onWineCardRemove: " + e.getMessage());
+            Log.d("***ERROR***", "onWineCardRemove: " + e);
+            Toast.makeText(this, "Error Occurred", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void getWineReviews(FirebaseFirestore db) {
-
-        final Context ctx = this;
 
         final ArrayList<WineReview> wineReviewList = new ArrayList<WineReview>();
         db.collection("WineReviews")
@@ -445,7 +452,7 @@ public class LibraryActivity extends AppCompatActivity
                         if (task.isSuccessful()) {
 
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
+                                Log.d("***DEBUG***", document.getId() + " => " + document.getData());
                                 WineReview wr = document.toObject(WineReview.class);
                                 wineReviewList.add(wr);
                             }
@@ -454,19 +461,16 @@ public class LibraryActivity extends AppCompatActivity
                             loadWineReviews();
                         } else {
                             Toast.makeText(ctx, "Error Occurred retrieving reviews", Toast.LENGTH_SHORT).show();
-                            Log.w(TAG, "Error getting documents.", task.getException());
+                            Log.d("***ERROR***", "Error getting documents.", task.getException());
                         }
                     }
                 });
     }
 
-
-    public void addWineReview(WineReview wr, FirebaseFirestore db) {
-        Log.d("***DEBUG***", "inside addWineReview");
+    public void createWineReview(final WineReview wr, FirebaseFirestore db) {
+        Log.d("***DEBUG***", "inside reAddWineReview");
 
         String docId;
-
-        final WineReview finalWineReview = wr;
 
         // Create a new user with a first and last name
         final Map<String, Object> wineReview = new HashMap<>();
@@ -477,7 +481,8 @@ public class LibraryActivity extends AppCompatActivity
         wineReview.put("year", wr.year);
         wineReview.put("location", wr.location);
         wineReview.put("description", wr.description);
-        wineReview.put("image", wr.image);
+        wineReview.put("filePath", wr.filePath);
+        wineReview.put("imageURL", wr.imageURL);
         wineReview.put("rating", wr.rating);
 
         // Add a new document with a generated ID
@@ -488,7 +493,7 @@ public class LibraryActivity extends AppCompatActivity
                     public void onSuccess(DocumentReference documentReference) {
                         Log.d("***DEBUG***", "Document added with ID: " + documentReference.getId());
                         //Store the docReference
-                        saveDocReference(documentReference.getId(), finalWineReview);
+                        saveDocReference(documentReference.getId(), wr);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -511,42 +516,127 @@ public class LibraryActivity extends AppCompatActivity
         }
     }
 
-    public void updateWineReview(WineReview wr, FirebaseFirestore db) {
+    public void updateWineReview(final WineReview wr, FirebaseFirestore db) {
         Log.d("***Debug***", "inside updateWineReview");
         // Create a new user with a first and last name
-        final Map<String, Object> wineReview = new HashMap<>();
+        final Map<String, Object> wineReviewMap = new HashMap<>();
 
         try {
-            wineReview.put("id", wr.id);
-            wineReview.put("docId", wr.docId);
-            wineReview.put("name", wr.name);
-            wineReview.put("maker", wr.maker);
-            wineReview.put("type", wr.type);
-            wineReview.put("year", wr.year);
-            wineReview.put("location", wr.location);
-            wineReview.put("description", wr.description);
-            wineReview.put("image", wr.image);
-            wineReview.put("rating", wr.rating);
+            wineReviewMap.put("id", wr.id);
+            wineReviewMap.put("docId", wr.docId);
+            wineReviewMap.put("name", wr.name);
+            wineReviewMap.put("maker", wr.maker);
+            wineReviewMap.put("type", wr.type);
+            wineReviewMap.put("year", wr.year);
+            wineReviewMap.put("location", wr.location);
+            wineReviewMap.put("description", wr.description);
+            wineReviewMap.put("filePath", wr.filePath);
+            wineReviewMap.put("imageURL", wr.imageURL);
+            wineReviewMap.put("rating", wr.rating);
 
             // Add a new document with a generated ID
             db.collection("WineReviews").document(wr.docId)
-                    .update(wineReview)
+                    .update(wineReviewMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Log.d("***Debug***", "DocumentSnapshot successfully updated!");
+                            Toast.makeText(ctx, "Updated " + wr.name, Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.w("***Debug***", "Error updating document", e);
+                            Toast.makeText(ctx, "Failed to delete " + wr.name, Toast.LENGTH_SHORT).show();
                         }
                     });
         }
         catch (Exception e) {
             Log.w("***Debug***", "Error updating document", e);
         }
+
+    }
+
+    public void deleteWineReview(final WineReview wineReview, FirebaseFirestore db) {
+        Log.d("***Debug***", "inside deleteWineReview");
+        // Add a new document with a generated ID
+        db.collection("WineReviews").document(wineReview.docId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                        Toast.makeText(ctx, "Successfully deleted " + wineReview.name, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                        Toast.makeText(ctx, "Failed to delete " + wineReview.name, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public void uploadFile(final WineReview wineReview) {
+        Log.d("***Debug***", "inside uploadFile");
+        Uri fileURI = Uri.fromFile(new File(wineReview.filePath));
+        final StorageReference ref = storageRef.child(fileURI.toString());
+
+        ref.putFile(fileURI)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        // Get a URL to the uploaded content
+                        Uri downloadUrl = ref.getDownloadUrl().getResult();
+                        wineReview.imageURL = downloadUrl.toString();
+                        //Store the download URL as the wine review image data
+
+                        Toast.makeText(ctx, "Successfully uploaded File " + wineReview.name, Toast.LENGTH_SHORT).show();
+                        updateWineReview(wineReview, fs);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle unsuccessful uploads
+                        Log.d("***ERROR***", "Failed to download File " + e.getMessage());
+                        Toast.makeText(ctx, "Failed to upload File ", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public void downloadFile(WineReview wineReview) {
+        Log.d("***Debug***", "inside downloadFile");
+        try {
+            File localFile = File.createTempFile("images", "jpg");
+
+            StorageReference ref = storageRef.child(wineReview.imageURL);
+            ref.getFile(localFile)
+                    .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                            // Successfully downloaded data to local file
+                            // ...
+
+                            Toast.makeText(ctx, "Successfully downloaded ", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle failed download
+                    // ...
+
+                    Toast.makeText(ctx, "Failed to download ", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        catch (Exception e) {
+            Log.d("***ERROR***", "Failed to download File " + e.getMessage());
+        }
+
 
     }
 }

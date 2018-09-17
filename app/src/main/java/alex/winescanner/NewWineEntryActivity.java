@@ -1,6 +1,8 @@
 package alex.winescanner;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,13 +17,16 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.io.File;
+
 public class NewWineEntryActivity extends AppCompatActivity {
 
     private ViewGroup mConstraintLayout;
     private int NEW_WR_IMAGE = 2;
     View rootView;
     LayoutInflater li;
-    WineReview wr;
+    WineReview existingWineReview;
+    WineReview newWineReview;
 
     ConstraintLayout cl;
     EditText txtWineName;
@@ -31,6 +36,8 @@ public class NewWineEntryActivity extends AppCompatActivity {
     EditText txtWineLocation;
     EditText txtWineDescription;
 
+    ImageView ivWinePicture;
+
     RatingBar wineRating;
 
     @Override
@@ -38,44 +45,45 @@ public class NewWineEntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_wine_entry);
 
-        cl = (ConstraintLayout)findViewById(R.id.new_wine_form);
-        txtWineName = (EditText) cl.findViewById(R.id.txtWineName);
-        txtWineMaker = (EditText) cl.findViewById(R.id.txtWineMaker);
-        txtWineType = (EditText) cl.findViewById(R.id.txtWineType);
-        txtWineYear = (EditText) cl.findViewById(R.id.txtWineYear);
-        txtWineLocation = (EditText) cl.findViewById(R.id.txtWineLocation);
-        txtWineDescription = (EditText) cl.findViewById(R.id.txtWineDescription);
-        wineRating = (RatingBar) cl.findViewById(R.id.ratingBar2);
+        newWineReview =  new WineReview();
+
+        cl = findViewById(R.id.new_wine_entry);
+        txtWineName = cl.findViewById(R.id.txtWineName);
+        txtWineMaker = cl.findViewById(R.id.txtWineMaker);
+        txtWineType = cl.findViewById(R.id.txtWineType);
+        txtWineYear = cl.findViewById(R.id.txtWineYear);
+        txtWineLocation = cl.findViewById(R.id.txtWineLocation);
+        txtWineDescription = cl.findViewById(R.id.txtWineDescription);
+        wineRating = cl.findViewById(R.id.ratingBar2);
+        ivWinePicture = cl.findViewById(R.id.iv_wine_picture);
 
         Intent intent = getIntent();
         if(intent != null) {
             String JSON  = intent.getStringExtra("edit");
-            wr = new Gson().fromJson(JSON, WineReview.class);
-            Log.d("***DEBUG***", "Inside newwineentry " + wr);
+            existingWineReview = new Gson().fromJson(JSON, WineReview.class);
+            Log.d("***DEBUG***", "Inside newwineentry " + existingWineReview);
             populateExistingReview();
         }
     }
-
-
 
     public void populateExistingReview() {
         Log.d("***DEBUG***", "Inside new saveWineReview");
 
         try {
             //populate form from existing data
-            txtWineName.setText(wr.name);
-            txtWineMaker.setText(wr.maker);
-            txtWineType.setText(wr.type);
-            txtWineYear.setText(wr.year);
-            txtWineLocation.setText(wr.location);
-            txtWineDescription.setText(wr.description);
-            //wineReview.setWineImage(wineImage.getImage);
-            wineRating.setRating(wr.rating);
+            txtWineName.setText(existingWineReview.name);
+            txtWineMaker.setText(existingWineReview.maker);
+            txtWineType.setText(existingWineReview.type);
+            txtWineYear.setText(existingWineReview.year);
+            txtWineLocation.setText(existingWineReview.location);
+            txtWineDescription.setText(existingWineReview.description);
+            ivWinePicture.setImageBitmap(existingWineReview.imageBitmap);
+            wineRating.setRating(existingWineReview.rating);
         }
         catch(Exception e) {
             Log.d("**ERROR**",": " + e.getMessage());
             Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
-            //return to library
+            //return to menu_library
 
             Intent intent = new Intent(this, LibraryActivity.class);
             setResult(RESULT_CANCELED, intent);
@@ -87,35 +95,36 @@ public class NewWineEntryActivity extends AppCompatActivity {
         Log.d("***DEBUG***", "Inside new saveWineReview");
 
         try {
-            WineReview wineReview =  new WineReview();
+            Gson gson = new Gson();
 
-            if(wr != null) {
-                wineReview = wr;
+            //if we are editing, populate with existing
+            if(existingWineReview != null) {
+                newWineReview = existingWineReview;
             }
 
             //populate data from form
-            wineReview.name = txtWineName.getText().toString();
-            wineReview.maker = txtWineMaker.getText().toString();
-            wineReview.type = txtWineType.getText().toString();
-            wineReview.year = txtWineYear.getText().toString();
-            wineReview.location = txtWineLocation.getText().toString();
-            wineReview.description = txtWineDescription.getText().toString();
-            //wineReview.setWineImage(wineImage.getImage);
-            wineReview.rating = (wineRating.getRating());
+            newWineReview.name = txtWineName.getText().toString();
+            newWineReview.maker = txtWineMaker.getText().toString();
+            newWineReview.type = txtWineType.getText().toString();
+            newWineReview.year = txtWineYear.getText().toString();
+            newWineReview.location = txtWineLocation.getText().toString();
+            newWineReview.description = txtWineDescription.getText().toString();
+            newWineReview.rating = wineRating.getRating();
 
-            Gson gson = new Gson();
-            String wineReviewJSON = gson.toJson(wineReview);
+            //wine review image holds a file path
+            newWineReview.imageBitmap = BitmapFactory.decodeResource(this.getResources(), R.id.iv_wine_picture);
 
-            //store new wine review in local storage? local and cloud?
-            if(wr != null) {
-                Toast.makeText(this, "Edited review for " + wineReview.name,
+            if(existingWineReview != null) {
+                Toast.makeText(this, "Edited review for " + newWineReview.name,
                         Toast.LENGTH_LONG).show();
             }
             else {
-                Toast.makeText(this, "Created a review for " + wineReview.name,
+                Toast.makeText(this, "Created a review for " + newWineReview.name,
                         Toast.LENGTH_LONG).show();
             }
 
+            String wineReviewJSON = gson.toJson(newWineReview);
+            //return to library activity
             Intent intent = new Intent(this, LibraryActivity.class);
             intent.putExtra("wineReviewJSON", wineReviewJSON);
             setResult(RESULT_OK, intent);
@@ -124,8 +133,8 @@ public class NewWineEntryActivity extends AppCompatActivity {
             Log.d("**ERROR**",": " + e.getMessage());
             Log.d("**ERROR2**",": " + e.getStackTrace().toString());
             Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
-            //return to library
 
+            //return to library activity
             Intent intent = new Intent(this, LibraryActivity.class);
             setResult(RESULT_CANCELED, intent);
         }
@@ -134,7 +143,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
 
     }
 
-    public void onAddWineReviewImageClicked() {
+    public void onAddWineImageClicked(View v) {
         //open camera, user takes picture, return with image
         Intent intent = new Intent(this, AndroidCameraApi.class);
         startActivityForResult(intent, NEW_WR_IMAGE);
@@ -144,12 +153,31 @@ public class NewWineEntryActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("***Debug***", "inside onActivityResult");
 
+        File pictureFile;
+        Bitmap myBitmap;
+
         if (resultCode == RESULT_OK && requestCode == NEW_WR_IMAGE) {
-            ConstraintLayout cl = (ConstraintLayout) findViewById(R.id.new_wine_form);
-            ImageView wineImage = (ImageView) cl.findViewById(R.id.imageView);
-            String wineReviewImage = (String) data.getStringExtra("wineReviewImage");
-            //wineImage.setImageDrawable(wineReviewImage);
+            Bundle bundle = data.getExtras();
+            Log.d("***Debug***", "inside bundle " + bundle);
+            if(bundle != null) {
+                pictureFile = (File) bundle.getSerializable("file");
+                myBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
+                ivWinePicture.setImageBitmap(myBitmap);
+                setWineReviewImage(pictureFile);
+            }
 
         }
     }
+
+    public void setWineReviewImage(File file) {
+        Log.d("***Debug***", "inside setWineReviewImage");
+
+        if(existingWineReview != null) {
+            existingWineReview.filePath = file.getPath();
+        } else {
+            newWineReview.filePath = file.getPath();
+        }
+    }
+
+
 }

@@ -22,6 +22,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -31,6 +32,7 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,7 +43,12 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+
+
 public class AndroidCameraApi extends AppCompatActivity {
+
+    private int NEW_WR_IMAGE = 2;
     private static final String TAG = "AndroidCameraApi";
     private Button takePictureButton;
     private Button reviewSelectionButton;
@@ -65,8 +72,11 @@ public class AndroidCameraApi extends AppCompatActivity {
     private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("***DEBUG***", "inside camera onCreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         textureView = (TextureView) findViewById(R.id.texture);
@@ -94,6 +104,7 @@ public class AndroidCameraApi extends AppCompatActivity {
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            Log.d("***DEBUG***", "inside onSurfaceTextureAvailable");
             //open your camera here
             openCamera();
         }
@@ -112,6 +123,7 @@ public class AndroidCameraApi extends AppCompatActivity {
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
+            Log.d("***DEBUG***", "inside onOpened");
             //This is called when the camera is open
             Log.e(TAG, "onOpened");
             cameraDevice = camera;
@@ -123,6 +135,7 @@ public class AndroidCameraApi extends AppCompatActivity {
         }
         @Override
         public void onError(CameraDevice camera, int error) {
+            Log.d("***DEBUG***", "inside onError " + error);
             cameraDevice.close();
             cameraDevice = null;
         }
@@ -130,17 +143,20 @@ public class AndroidCameraApi extends AppCompatActivity {
     final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+            Log.d("***DEBUG***", "inside captureCallbackListener");
             super.onCaptureCompleted(session, request, result);
             Toast.makeText(AndroidCameraApi.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
     protected void startBackgroundThread() {
+        Log.d("***DEBUG***", "inside startBackgroundThread");
         mBackgroundThread = new HandlerThread("Camera Background");
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
     protected void stopBackgroundThread() {
+        Log.d("***DEBUG***", "inside stopBackgroundThread");
         mBackgroundThread.quitSafely();
         try {
             mBackgroundThread.join();
@@ -152,18 +168,21 @@ public class AndroidCameraApi extends AppCompatActivity {
     }
 
     protected void reviewSelection(View view) {
+        Log.d("***DEBUG***", "inside reviewSelection");
         //do something in response to button
         Intent intent = new Intent(this, ReviewSelectionScreen.class);
         startActivity(intent);
     }
 
     protected void takePicture() {
+        Log.d("***DEBUG***", "inside takePicture");
         if(null == cameraDevice) {
             Log.e(TAG, "cameraDevice is null");
             return;
         }
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
+            Log.d("***DEBUG***", "inside takePicture2");
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
             Size[] jpegSizes = null;
             if (characteristics != null) {
@@ -184,11 +203,13 @@ public class AndroidCameraApi extends AppCompatActivity {
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
             // Orientation
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
+            Log.d("***DEBUG***", "inside takePicture3");
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
+            final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
+                    Log.d("***DEBUG***", "inside onImageAvailable");
                     Image image = null;
                     try {
                         image = reader.acquireLatestImage();
@@ -207,29 +228,38 @@ public class AndroidCameraApi extends AppCompatActivity {
                     }
                 }
                 private void save(byte[] bytes) throws IOException {
+                    Log.d("***DEBUG***", "inside save");
                     OutputStream output = null;
                     try {
+
                         output = new FileOutputStream(file);
                         output.write(bytes);
                     } finally {
                         if (null != output) {
                             output.close();
+
+                            //picture taken, return
+                            returnToCaller(file);
                         }
                     }
                 }
             };
+            Log.d("***DEBUG***", "inside takePicture4");
             reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+                    Log.d("***DEBUG***", "inside cameraCapturesession capture listener");
                     super.onCaptureCompleted(session, request, result);
                     Toast.makeText(AndroidCameraApi.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
                     createCameraPreview();
                 }
             };
+            Log.d("***DEBUG***", "inside takePicture5");
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(CameraCaptureSession session) {
+                    Log.d("***DEBUG***", "inside onConfigured");
                     try {
                         session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
                     } catch (CameraAccessException e) {
@@ -238,13 +268,17 @@ public class AndroidCameraApi extends AppCompatActivity {
                 }
                 @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
+                    Log.d("***DEBUG***", "inside takePicture7");
                 }
             }, mBackgroundHandler);
+            Log.d("***DEBUG***", "inside takePicture6");
         } catch (CameraAccessException e) {
+            Log.d("***DEBUG***", "inside CameraAccessException");
             e.printStackTrace();
         }
     }
     protected void createCameraPreview() {
+        Log.d("***DEBUG***", "inside createCameraPreview");
         try {
             SurfaceTexture texture = textureView.getSurfaceTexture();
             assert texture != null;
@@ -255,6 +289,7 @@ public class AndroidCameraApi extends AppCompatActivity {
             cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback(){
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                    Log.d("***DEBUG***", "inside preview onConfigured");
                     //The camera is already closed
                     if (null == cameraDevice) {
                         return;
@@ -272,15 +307,25 @@ public class AndroidCameraApi extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+
     private void openCamera() {
+        Log.d("***DEBUG***", "inside openCamera");
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        Log.e(TAG, "is camera open");
         try {
             cameraId = manager.getCameraIdList()[0];
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
-            imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
+
+            //TODO: marking this
+            Size[] sizeArray = map.getOutputSizes(SurfaceTexture.class);
+            for(Size s : sizeArray) {
+                if(s.getWidth() == 1280 && s.getHeight() == 720) {
+                    imageDimension = s;
+                }
+            }
+
             // Add permission for camera and let user grant the permission
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(AndroidCameraApi.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
@@ -293,6 +338,7 @@ public class AndroidCameraApi extends AppCompatActivity {
         Log.e(TAG, "openCamera X");
     }
     protected void updatePreview() {
+        Log.d("***DEBUG***", "inside updatePreview");
         if(null == cameraDevice) {
             Log.e(TAG, "updatePreview error, return");
         }
@@ -315,6 +361,7 @@ public class AndroidCameraApi extends AppCompatActivity {
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d("***DEBUG***", "inside onRequestPermissionsResult");
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 // close the app
@@ -325,6 +372,7 @@ public class AndroidCameraApi extends AppCompatActivity {
     }
     @Override
     protected void onResume() {
+        Log.d("***DEBUG***", "inside onResume");
         super.onResume();
         Log.e(TAG, "onResume");
         startBackgroundThread();
@@ -342,8 +390,13 @@ public class AndroidCameraApi extends AppCompatActivity {
         super.onPause();
     }
 
-    //Intent intent = new Intent(this, LibraryActivity.class);
-    //            intent.putExtra("wineReviewJSON", wineReviewJSON);
-    //            setResult(RESULT_OK, intent);
-    //super.finish()
+
+    public void returnToCaller(File file) {
+        Log.d("***Debug***", "inside returnToCaller");
+
+        Intent intent = new Intent(this, NewWineEntryActivity.class);
+        intent.putExtra("file", file);
+        setResult(RESULT_OK, intent);
+        super.finish();
+    }
 }

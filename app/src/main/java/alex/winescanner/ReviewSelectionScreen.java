@@ -41,7 +41,7 @@ public class ReviewSelectionScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review_selection_screen);
 
-        btnMore = (Button) findViewById(R.id.btnMore);
+        btnMore = findViewById(R.id.btnMore);
 
         btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +50,7 @@ public class ReviewSelectionScreen extends AppCompatActivity {
             }
         });
 
-        mConstraintLayout = (ViewGroup) findViewById(R.id.layoutReviewMain);
+        mConstraintLayout = findViewById(R.id.layoutReviewMain);
 
         init();
 
@@ -74,11 +74,17 @@ public class ReviewSelectionScreen extends AppCompatActivity {
 
     }
 
+    @SuppressWarnings("unchecked")
     private void getWineDataFromIntent() {
         Log.d("5", "Inside reviewselectionscreen getWineDataFromIntent");
-        Intent intent = getIntent();
-        wineList = (ArrayList<Wine>) intent.getSerializableExtra("WineList");
-        wineCount = intent.getIntExtra("wineCount", 0);
+        try {
+            Intent intent = getIntent();
+            wineList = (ArrayList<Wine>) intent.getSerializableExtra("WineList");
+            wineCount = intent.getIntExtra("wineCount", 0);
+        } catch(Exception e) {
+
+        }
+
     }
 
     private void createWineCard(Context context) {

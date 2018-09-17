@@ -8,7 +8,6 @@
     tools:layout_editor_absoluteY="81dp">
 
     <include
-        android:id="@+id/new_wine_form"
-        layout="@layout/content_new_wine_entry" />
+        layout="@layout/new_wine_entry" />
 
 </android.support.constraint.ConstraintLayout>

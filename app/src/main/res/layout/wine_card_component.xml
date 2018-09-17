@@ -45,6 +45,7 @@
         android:layout_height="145dp"
         android:layout_alignParentStart="true"
         android:contentDescription="@string/wine_picture"
+        android:onClick="onWineCardDetails"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintHorizontal_bias="0.0"

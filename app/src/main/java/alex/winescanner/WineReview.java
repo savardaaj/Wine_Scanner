@@ -1,9 +1,7 @@
 package alex.winescanner;
 
-import android.media.Image;
-import android.media.Rating;
-import android.view.View;
-import android.widget.RatingBar;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 import java.util.UUID;
 
@@ -14,24 +12,27 @@ public class WineReview {
     public String type;
     public String year;
     public String location;
-    public String image;
+    public Bitmap imageBitmap;
+    public String imageURL;
     public String description;
     public float rating;
     public String id;
     public String docId;
+    public String filePath;
+    public String userId;
 
     public WineReview() {
         this.id = UUID.randomUUID().toString();
     }
 
     public WineReview(String wineName, String wineMaker, String wineType, String wineYear,
-                      String wineLocation, String wineImage, String wineDescription, float wineRating) {
+                      String wineLocation, Bitmap wineImage, String wineDescription, float wineRating) {
         this.name = wineName;
         this.maker = wineMaker;
         this.type = wineType;
         this.year = wineYear;
         this.location = wineLocation;
-        this.image = wineImage;
+        this.imageBitmap = wineImage;
         this.description = wineDescription;
         this.rating = wineRating;
     }

@@ -21,8 +21,8 @@
         android:layout_gravity="start"
         android:background="@color/cardview_light_background"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_library"
-        app:menu="@menu/activity_library_drawer" />
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/activity_nav_drawer" />
 
     <!-- excluding because I dont know how to use it properly with drawer layout
     <include

@@ -3,6 +3,8 @@
     package="alex.winescanner">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -28,10 +30,14 @@
             android:name=".LibraryActivity"
             android:label="@string/title_activity_library"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".NewWineEntryActivity"></activity>
+        <activity android:name=".NewWineEntryActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CardDetailsActivity"
+            android:label="@string/title_activity_card_details"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
