@@ -18,7 +18,7 @@ public class WineReview {
     public float rating;
     public String id;
     public String docId;
-    public String filePath;
+    public String pictureFilePath;
     public String userId;
 
     public WineReview() {

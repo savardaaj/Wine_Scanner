@@ -205,7 +205,8 @@ public class AndroidCameraApi extends AppCompatActivity {
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             Log.d("***DEBUG***", "inside takePicture3");
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
+
+            final File file = new File(LibraryActivity.wineScannerImagesDirectory + "/pic.png");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {

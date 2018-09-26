@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -44,6 +45,7 @@ import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +63,9 @@ public class LibraryActivity extends AppCompatActivity
     private static int EDIT_WR = 2;
     private StorageReference storageRef;
 
+    //storage/emulated/0/WineScanner/Images/337039ea-41ed-4a6d-aa4a-a1b583011539.png
+    final static File wineScannerImagesDirectory = new File(Environment.getExternalStorageDirectory().getPath() + "/WineScanner/Images");;
+
     FirebaseFirestore fs;
     DataBaseHandler dbh;
 
@@ -69,11 +74,13 @@ public class LibraryActivity extends AppCompatActivity
         Log.d("***Debug***", "inside LibraryActivity: onCreate");
         super.onCreate(savedInstanceState);
         FirebaseApp.initializeApp(this);
-
         dbh = new DataBaseHandler();
-
         fs = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
+
+
+        createPictureStorage();
+
         setContentView(R.layout.activity_library);
 
         wineReviewArrayList = new ArrayList<>();
@@ -113,13 +120,11 @@ public class LibraryActivity extends AppCompatActivity
                     for(WineReview wr : wineReviewArrayList) {
                         if(wr.id.equals(wineReview.id)) {
                             wineReviewArrayList.set(wineReviewArrayList.indexOf(wr), wineReview);
-
+                            uploadFile(wineReview);
                             updateWineReview(wineReview, fs);
                             break;
                         }
-
                     }
-
                 }
             }
         }
@@ -254,7 +259,6 @@ public class LibraryActivity extends AppCompatActivity
     public void loadWineReviews() {
         Log.d("***Debug***", "inside loadWineReviews");
 
-        File pictureFile;
         Bitmap myBitmap;
 
         //redraw view
@@ -266,9 +270,9 @@ public class LibraryActivity extends AppCompatActivity
 
         for(WineReview wr : wineReviewArrayList) {
 
-            if(wr.filePath != null) {
-                pictureFile = new File(wr.filePath);
-                myBitmap = BitmapFactory.decodeFile(pictureFile.getAbsolutePath());
+            if(wr.pictureFilePath != null) {
+                Log.d("***Debug***", "inside loadWineReviews set image for picture file path");
+                myBitmap = BitmapFactory.decodeFile(wr.pictureFilePath);
                 wr.imageBitmap = myBitmap;
             }
 
@@ -481,7 +485,7 @@ public class LibraryActivity extends AppCompatActivity
         wineReview.put("year", wr.year);
         wineReview.put("location", wr.location);
         wineReview.put("description", wr.description);
-        wineReview.put("filePath", wr.filePath);
+        wineReview.put("pictureFilePath", wr.pictureFilePath);
         wineReview.put("imageURL", wr.imageURL);
         wineReview.put("rating", wr.rating);
 
@@ -530,7 +534,7 @@ public class LibraryActivity extends AppCompatActivity
             wineReviewMap.put("year", wr.year);
             wineReviewMap.put("location", wr.location);
             wineReviewMap.put("description", wr.description);
-            wineReviewMap.put("filePath", wr.filePath);
+            wineReviewMap.put("pictureFilePath", wr.pictureFilePath);
             wineReviewMap.put("imageURL", wr.imageURL);
             wineReviewMap.put("rating", wr.rating);
 
@@ -581,9 +585,10 @@ public class LibraryActivity extends AppCompatActivity
 
     public void uploadFile(final WineReview wineReview) {
         Log.d("***Debug***", "inside uploadFile");
-        Uri fileURI = Uri.fromFile(new File(wineReview.filePath));
+        Uri fileURI = Uri.fromFile(new File(wineReview.pictureFilePath));
         final StorageReference ref = storageRef.child(fileURI.toString());
-
+        Log.d("***Debug***", "fileURI: " + fileURI);
+        Log.d("***Debug***", "pictureFilePath: " + wineReview.pictureFilePath);
         ref.putFile(fileURI)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -639,4 +644,25 @@ public class LibraryActivity extends AppCompatActivity
 
 
     }
+    public void createPictureStorage() {
+        Log.d("***Debug***", "inside createPictureStorage");
+        try {
+            // create a File object for the parent directory
+
+            if(!wineScannerImagesDirectory.exists()) {
+                // have the object build the directory structure, if needed.
+                if(!wineScannerImagesDirectory.mkdirs()) {
+                    Log.d("***DEBUG***", "Problem creating wine scanner directory");
+                }
+                else {
+                    Log.d("***DEBUG***", "Success creating wine scanner directory");
+                }
+            }
+        }
+        catch(Exception e) {
+            Log.d("***ERROR***", "" + e.getMessage());
+        }
+
+    }
+
 }

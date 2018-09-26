@@ -14,11 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".AndroidCameraApi" />
         <activity
@@ -26,19 +22,27 @@
             android:label="@string/title_activity_review_selection_screen"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".BarcodeScanner" />
-        <activity
-            android:name=".LibraryActivity"
+        <activity android:name=".LibraryActivity"
             android:label="@string/title_activity_library"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".NewWineEntryActivity" />
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!--android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar"-->
+        </activity>
         <activity
             android:name=".CardDetailsActivity"
             android:label="@string/title_activity_card_details"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

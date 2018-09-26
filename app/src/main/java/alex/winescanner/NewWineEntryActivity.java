@@ -102,6 +102,20 @@ public class NewWineEntryActivity extends AppCompatActivity {
                 newWineReview = existingWineReview;
             }
 
+            //rename wine picture path to be proper
+            File directory = new File (LibraryActivity.wineScannerImagesDirectory.getPath());
+            File oldFile = new File(newWineReview.pictureFilePath);
+
+            Log.d("***DEBUG***", "Was: : " + oldFile.getName());
+
+            File newFile = new File(directory, newWineReview.id + ".png");
+            if(oldFile.renameTo(newFile)) {
+                Log.d("***DEBUG***", "Rename Successful");
+            }
+
+            Log.d("***DEBUG***", "IS : " + oldFile.getName());
+            Log.d("***DEBUG***", "NewFile: : " + newFile.getName());
+
             //populate data from form
             newWineReview.name = txtWineName.getText().toString();
             newWineReview.maker = txtWineMaker.getText().toString();
@@ -110,6 +124,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
             newWineReview.location = txtWineLocation.getText().toString();
             newWineReview.description = txtWineDescription.getText().toString();
             newWineReview.rating = wineRating.getRating();
+            newWineReview.pictureFilePath = newFile.getPath();
 
             //wine review image holds a file path
             newWineReview.imageBitmap = BitmapFactory.decodeResource(this.getResources(), R.id.iv_wine_picture);
@@ -172,10 +187,11 @@ public class NewWineEntryActivity extends AppCompatActivity {
     public void setWineReviewImage(File file) {
         Log.d("***Debug***", "inside setWineReviewImage");
 
+        //sets the path of the default location for the picture
         if(existingWineReview != null) {
-            existingWineReview.filePath = file.getPath();
+            existingWineReview.pictureFilePath = file.getPath();
         } else {
-            newWineReview.filePath = file.getPath();
+            newWineReview.pictureFilePath = file.getPath();
         }
     }
 
