@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -66,6 +67,7 @@ public class LibraryActivity extends AppCompatActivity
     //storage/emulated/0/WineScanner/Images/337039ea-41ed-4a6d-aa4a-a1b583011539.png
     final static File wineScannerImagesDirectory = new File(Environment.getExternalStorageDirectory().getPath() + "/WineScanner/Images");;
 
+    FirebaseUser user;
     FirebaseFirestore fs;
     DataBaseHandler dbh;
 
@@ -73,11 +75,11 @@ public class LibraryActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("***Debug***", "inside LibraryActivity: onCreate");
         super.onCreate(savedInstanceState);
+        user = (new Bundle(getIntent().getExtras()).getParcelable("userData"));
         FirebaseApp.initializeApp(this);
         dbh = new DataBaseHandler();
         fs = FirebaseFirestore.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference();
-
 
         createPictureStorage();
 
@@ -111,16 +113,24 @@ public class LibraryActivity extends AppCompatActivity
             String wineReviewJSON = data.getStringExtra("wineReviewJSON");
             if (wineReviewJSON != null) {
                 WineReview wineReview = new Gson().fromJson(wineReviewJSON, WineReview.class);
+                wineReview.userUUID = user.getUid();
                 if (requestCode == NEW_WR) {
                     wineReviewArrayList.add(wineReview);
-                    uploadFile(wineReview);
+                    if(wineReview.pictureFilePath != null) {
+                        //keep receiving task is not yet complete
+                        //uploadFile(wineReview);
+                    }
+
                     createWineReview(wineReview, fs);
                 }
                 else if (requestCode == EDIT_WR) {
                     for(WineReview wr : wineReviewArrayList) {
                         if(wr.id.equals(wineReview.id)) {
                             wineReviewArrayList.set(wineReviewArrayList.indexOf(wr), wineReview);
-                            uploadFile(wineReview);
+                            if(wineReview.pictureFilePath != null) {
+                                //keep receiving task is not yet complete
+                                //uploadFile(wineReview);
+                            }
                             updateWineReview(wineReview, fs);
                             break;
                         }
@@ -448,7 +458,7 @@ public class LibraryActivity extends AppCompatActivity
     public void getWineReviews(FirebaseFirestore db) {
 
         final ArrayList<WineReview> wineReviewList = new ArrayList<WineReview>();
-        db.collection("WineReviews")
+        db.collection("WineReviews").whereEqualTo("userUUID", user.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -479,6 +489,7 @@ public class LibraryActivity extends AppCompatActivity
         // Create a new user with a first and last name
         final Map<String, Object> wineReview = new HashMap<>();
         wineReview.put("id", wr.getId());
+        wineReview.put("userUUID", wr.userUUID);
         wineReview.put("name", wr.name);
         wineReview.put("maker", wr.maker);
         wineReview.put("type", wr.type);
@@ -527,6 +538,7 @@ public class LibraryActivity extends AppCompatActivity
 
         try {
             wineReviewMap.put("id", wr.id);
+            wineReviewMap.put("userUUID", wr.userUUID);
             wineReviewMap.put("docId", wr.docId);
             wineReviewMap.put("name", wr.name);
             wineReviewMap.put("maker", wr.maker);

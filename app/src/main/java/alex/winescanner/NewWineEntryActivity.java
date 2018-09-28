@@ -45,7 +45,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_wine_entry);
 
-        newWineReview =  new WineReview();
+        newWineReview = new WineReview();
 
         cl = findViewById(R.id.new_wine_entry);
         txtWineName = cl.findViewById(R.id.txtWineName);
@@ -67,7 +67,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
     }
 
     public void populateExistingReview() {
-        Log.d("***DEBUG***", "Inside new saveWineReview");
+        Log.d("***DEBUG***", "Inside populateExistingReview");
 
         try {
             //populate form from existing data
@@ -92,29 +92,34 @@ public class NewWineEntryActivity extends AppCompatActivity {
     }
 
     public void saveNewWineReview(View v) {
-        Log.d("***DEBUG***", "Inside new saveWineReview");
+        Log.d("***DEBUG***", "Inside saveWineReview");
 
         try {
             Gson gson = new Gson();
+            File newFile;
 
             //if we are editing, populate with existing
             if(existingWineReview != null) {
                 newWineReview = existingWineReview;
             }
 
-            //rename wine picture path to be proper
-            File directory = new File (LibraryActivity.wineScannerImagesDirectory.getPath());
-            File oldFile = new File(newWineReview.pictureFilePath);
+            if(newWineReview.pictureFilePath != null) {
+                //rename wine picture path to be proper
+                File directory = new File (LibraryActivity.wineScannerImagesDirectory.getPath());
+                File oldFile = new File(newWineReview.pictureFilePath);
 
-            Log.d("***DEBUG***", "Was: : " + oldFile.getName());
+                Log.d("***DEBUG***", "Was: : " + oldFile.getName());
 
-            File newFile = new File(directory, newWineReview.id + ".png");
-            if(oldFile.renameTo(newFile)) {
-                Log.d("***DEBUG***", "Rename Successful");
+                newFile = new File(directory, newWineReview.id + ".png");
+                if(oldFile.renameTo(newFile)) {
+                    Log.d("***DEBUG***", "Rename Successful");
+                }
+
+                Log.d("***DEBUG***", "IS : " + oldFile.getName());
+                Log.d("***DEBUG***", "NewFile: : " + newFile.getName());
+                newWineReview.pictureFilePath = newFile.getPath();
             }
 
-            Log.d("***DEBUG***", "IS : " + oldFile.getName());
-            Log.d("***DEBUG***", "NewFile: : " + newFile.getName());
 
             //populate data from form
             newWineReview.name = txtWineName.getText().toString();
@@ -124,7 +129,6 @@ public class NewWineEntryActivity extends AppCompatActivity {
             newWineReview.location = txtWineLocation.getText().toString();
             newWineReview.description = txtWineDescription.getText().toString();
             newWineReview.rating = wineRating.getRating();
-            newWineReview.pictureFilePath = newFile.getPath();
 
             //wine review image holds a file path
             newWineReview.imageBitmap = BitmapFactory.decodeResource(this.getResources(), R.id.iv_wine_picture);
@@ -145,8 +149,8 @@ public class NewWineEntryActivity extends AppCompatActivity {
             setResult(RESULT_OK, intent);
         }
         catch(Exception e) {
-            Log.d("**ERROR**",": " + e.getMessage());
-            Log.d("**ERROR2**",": " + e.getStackTrace().toString());
+            Log.d("**ERROR**",": " + e.getLocalizedMessage());
+            Log.d("**ERROR2**",": " + e.getCause());
             Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
 
             //return to library activity

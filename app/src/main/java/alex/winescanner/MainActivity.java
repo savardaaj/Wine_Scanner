@@ -13,6 +13,8 @@ import android.Manifest;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -28,13 +30,21 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
+    FirebaseUser user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("1", "Inside main oncreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         verifyStoragePermissions(this);
+
+        Intent intent = getIntent();
+        if(intent != null) {
+            Bundle bundle = intent.getExtras();
+            user = bundle.getParcelable("userData");
+            Log.d("***DEBUG***", "USER: "+ user.getEmail());
+        }
     }
 
     //Called when user taps the Compare Wines button
@@ -56,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("2", "Inside main viewLibrary");
         //do something in response to button
         Intent intent = new Intent(this, LibraryActivity.class);
+        intent.putExtra("userData", user);
         startActivity(intent);
     }
 
