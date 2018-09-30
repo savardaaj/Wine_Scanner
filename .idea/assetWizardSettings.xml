@@ -40,12 +40,26 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="paddingPercent" value="10" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                     </map>
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_action_user" />
-                                      <entry key="theme" value="HOLO_DARK" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\Alex\Downloads\Images\ic_green_plus.png" />
+                                      <entry key="outputName" value="ic_green_plus" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="41876a" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -93,11 +107,11 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="26773b" />
-                            <entry key="height" value="50" />
-                            <entry key="outputName" value="ic_facebook_icon" />
+                            <entry key="height" value="25" />
+                            <entry key="outputName" value="ic_corkscrew" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\Alex\Downloads\Images\facebook-icon.svg" />
-                            <entry key="width" value="50" />
+                            <entry key="sourceFile" value="C:\Users\Alex\Downloads\Images\corkscrew.svg" />
+                            <entry key="width" value="25" />
                           </map>
                         </option>
                       </PersistentState>

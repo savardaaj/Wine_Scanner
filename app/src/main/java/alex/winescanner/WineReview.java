@@ -20,9 +20,25 @@ public class WineReview {
     public String docId;
     public String pictureFilePath;
     public String userUUID;
+    public String barcode;
+    public boolean shareReview;
 
-    public WineReview() {
+    WineReview() {
         this.id = UUID.randomUUID().toString();
+        this.name = "";
+        this.maker = "";
+        this.type = "";
+        this.year = "";
+        this.location = "";
+        //this.imageBitmap = Bitmap.createBitmap(); not sure how to do a new one
+        this.imageURL = "";
+        this.description = "";
+        this.rating = 0;
+        this.docId = "";
+        this.pictureFilePath = "";
+        this.userUUID = "";
+        this.barcode = "";
+        this.shareReview = false;
     }
 
     public String getId() {

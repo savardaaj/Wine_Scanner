@@ -1,5 +1,7 @@
 package alex.winescanner;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -35,8 +38,10 @@ public class NewWineEntryActivity extends AppCompatActivity {
     EditText txtWineYear;
     EditText txtWineLocation;
     EditText txtWineDescription;
+    CheckBox cbShareReview;
 
     ImageView ivWinePicture;
+    ImageView ivPlaceholderAdd;
 
     RatingBar wineRating;
 
@@ -56,13 +61,18 @@ public class NewWineEntryActivity extends AppCompatActivity {
         txtWineDescription = cl.findViewById(R.id.txtWineDescription);
         wineRating = cl.findViewById(R.id.ratingBar2);
         ivWinePicture = cl.findViewById(R.id.iv_wine_picture);
+        ivPlaceholderAdd = cl.findViewById(R.id.iv_placeholder_add);
+        cbShareReview = cl.findViewById(R.id.cb_share_review);
+
+        txtWineName.clearFocus();
 
         Intent intent = getIntent();
         if(intent != null) {
             String JSON  = intent.getStringExtra("edit");
             existingWineReview = new Gson().fromJson(JSON, WineReview.class);
-            Log.d("***DEBUG***", "Inside newwineentry " + existingWineReview);
-            populateExistingReview();
+            if(existingWineReview != null) {
+                populateExistingReview();
+            }
         }
     }
 
@@ -77,21 +87,28 @@ public class NewWineEntryActivity extends AppCompatActivity {
             txtWineYear.setText(existingWineReview.year);
             txtWineLocation.setText(existingWineReview.location);
             txtWineDescription.setText(existingWineReview.description);
-            ivWinePicture.setImageBitmap(existingWineReview.imageBitmap);
             wineRating.setRating(existingWineReview.rating);
+            cbShareReview.setChecked(existingWineReview.shareReview);
+
+            if(existingWineReview.imageBitmap != null) {
+                ivWinePicture.setImageBitmap(existingWineReview.imageBitmap);
+            }
+
         }
         catch(Exception e) {
             Log.d("**ERROR**",": " + e.getMessage());
+            Log.d("**ERROR**",": " + e.getStackTrace());
             Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
-            //return to menu_library
 
+            //return to menu_library
             Intent intent = new Intent(this, LibraryActivity.class);
             setResult(RESULT_CANCELED, intent);
+            finish();
         }
 
     }
 
-    public void saveNewWineReview(View v) {
+    public void onClickSaveWineReview(View v) {
         Log.d("***DEBUG***", "Inside saveWineReview");
 
         try {
@@ -103,23 +120,21 @@ public class NewWineEntryActivity extends AppCompatActivity {
                 newWineReview = existingWineReview;
             }
 
-            if(newWineReview.pictureFilePath != null) {
-                //rename wine picture path to be proper
+            //change the storage location of the image taken
+            if(!newWineReview.pictureFilePath.isEmpty() || newWineReview.pictureFilePath != null) {
+
                 File directory = new File (LibraryActivity.wineScannerImagesDirectory.getPath());
                 File oldFile = new File(newWineReview.pictureFilePath);
-
-                Log.d("***DEBUG***", "Was: : " + oldFile.getName());
 
                 newFile = new File(directory, newWineReview.id + ".png");
                 if(oldFile.renameTo(newFile)) {
                     Log.d("***DEBUG***", "Rename Successful");
                 }
 
-                Log.d("***DEBUG***", "IS : " + oldFile.getName());
-                Log.d("***DEBUG***", "NewFile: : " + newFile.getName());
                 newWineReview.pictureFilePath = newFile.getPath();
+                //wine review image holds a file path
+                newWineReview.imageBitmap = BitmapFactory.decodeResource(this.getResources(), R.id.iv_wine_picture);
             }
-
 
             //populate data from form
             newWineReview.name = txtWineName.getText().toString();
@@ -129,9 +144,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
             newWineReview.location = txtWineLocation.getText().toString();
             newWineReview.description = txtWineDescription.getText().toString();
             newWineReview.rating = wineRating.getRating();
-
-            //wine review image holds a file path
-            newWineReview.imageBitmap = BitmapFactory.decodeResource(this.getResources(), R.id.iv_wine_picture);
+            newWineReview.shareReview = cbShareReview.isChecked();
 
             if(existingWineReview != null) {
                 Toast.makeText(this, "Edited review for " + newWineReview.name,
@@ -162,7 +175,19 @@ public class NewWineEntryActivity extends AppCompatActivity {
 
     }
 
-    public void onAddWineImageClicked(View v) {
+    public void onClickHelp(View v) {
+        String message = "This will allow your review to show up to other people for this specific barcodeWine";
+        String title = "Help";
+
+        AlertDialogBuilder adb = new AlertDialogBuilder();
+        adb.createNewAlertDialog(this, title, message);
+    }
+
+    public void onClickCancel(View v) {
+        finish();
+    }
+
+    public void onClickAddWineImage(View v) {
         //open camera, user takes picture, return with image
         Intent intent = new Intent(this, AndroidCameraApi.class);
         startActivityForResult(intent, NEW_WR_IMAGE);

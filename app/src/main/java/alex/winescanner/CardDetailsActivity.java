@@ -33,6 +33,8 @@ public class CardDetailsActivity extends AppCompatActivity {
     EditText txtWineYear;
     EditText txtWineLocation;
     EditText txtWineDescription;
+    ImageView ivWineImage;
+    ImageView ivPlaceholderAdd;
 
     RatingBar wineRating;
 
@@ -40,29 +42,31 @@ public class CardDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_details);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        cl = (ConstraintLayout)findViewById(R.id.content_new_wine_entry);
-        txtWineName = (EditText) cl.findViewById(R.id.txtWineName);
-        txtWineMaker = (EditText) cl.findViewById(R.id.txtWineMaker);
-        txtWineType = (EditText) cl.findViewById(R.id.txtWineType);
-        txtWineYear = (EditText) cl.findViewById(R.id.txtWineYear);
-        txtWineLocation = (EditText) cl.findViewById(R.id.txtWineLocation);
-        txtWineDescription = (EditText) cl.findViewById(R.id.txtWineDescription);
-        wineRating = (RatingBar) cl.findViewById(R.id.ratingBar2);
+        cl = findViewById(R.id.content_new_wine_entry);
+        txtWineName =  cl.findViewById(R.id.txtWineName);
+        txtWineMaker =  cl.findViewById(R.id.txtWineMaker);
+        txtWineType =  cl.findViewById(R.id.txtWineType);
+        txtWineYear =  cl.findViewById(R.id.txtWineYear);
+        txtWineLocation =  cl.findViewById(R.id.txtWineLocation);
+        txtWineDescription =  cl.findViewById(R.id.txtWineDescription);
+        wineRating =  cl.findViewById(R.id.ratingBar2);
+        ivWineImage = cl.findViewById(R.id.iv_wine_picture);
+        ivPlaceholderAdd = cl.findViewById(R.id.iv_placeholder_add);
 
         Intent intent = getIntent();
         if(intent != null) {
-            String JSON  = intent.getStringExtra("edit");
+            String JSON  = intent.getStringExtra("details");
             wr = new Gson().fromJson(JSON, WineReview.class);
-            Log.d("***DEBUG***", "Inside newwineentry " + wr);
+            Log.d("***DEBUG***", "Inside new barcodeWine entry " + wr);
             loadWineReview(wr);
         }
     }
 
     public void loadWineReview(WineReview wr) {
-        Log.d("***Debug***", "inside loadWineReviews");
+        Log.d("***Debug***", "inside loadWineReview");
 
         try {
             //populate form from existing data
@@ -72,8 +76,11 @@ public class CardDetailsActivity extends AppCompatActivity {
             txtWineYear.setText(wr.year);
             txtWineLocation.setText(wr.location);
             txtWineDescription.setText(wr.description);
-            //newWineReview.setWineImage(wineImage.getImage);
             wineRating.setRating(wr.rating);
+
+            if(wr.imageBitmap != null) {
+                ivWineImage.setImageBitmap(wr.imageBitmap);
+            }
         }
         catch(Exception e) {
             Log.d("**ERROR**",": " + e.getMessage());

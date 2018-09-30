@@ -1,65 +1,99 @@
 package alex.winescanner;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.api.Distribution;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+
+import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private Context ctx;
+    private SharedPreferences loginPreferences;
+    private SharedPreferences.Editor loginPrefsEditor;
+    private Boolean saveLogin;
+    private final int RC_SIGN_IN = 1;
+    private final int FB_SIGN_IN = 2;
+
+    CallbackManager callbackManager;
 
     EditText etUsername;
     EditText etPassword;
+    CheckBox cbSaveLogin;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ActionBar actionBar = getActionBar();
-        if(actionBar != null) {
-            actionBar.hide();
+        callbackManager = CallbackManager.Factory.create();
+
+        try {
+            ctx = this;
+
+            etUsername = findViewById(R.id.etUsername);
+            etPassword = findViewById(R.id.etPassword);
+            cbSaveLogin = findViewById(R.id.cb_remember_login);
+
+            mAuth = FirebaseAuth.getInstance();
+
+            loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
+
+            saveLogin = loginPreferences.getBoolean("rememberMe", false);
+            if (saveLogin) {
+
+                etUsername.setText(loginPreferences.getString("username", ""));
+                etPassword.setText(loginPreferences.getString("password", ""));
+                cbSaveLogin.setChecked(true);
+                Log.d("***DEBUG***", "loginPrefsUser " + loginPreferences.getString("username", "") );
+            }
         }
-        ctx = this;
+        catch (Exception e) {
 
-        etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
+        }
 
-        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -67,8 +101,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
-
     }
 
     public void onClickLogin(View v) {
@@ -78,19 +110,49 @@ public class LoginActivity extends AppCompatActivity {
         String password = etPassword.getText().toString();
 
         if(!username.equals("") && !password.equals("")) {
-            //Check that the account exists
-            //query accounts table
-            signIn(username, password);
+            signInDefaultCredentials(username, password);
         }
 
     }
 
     public void onClickGoogle(View v) {
+        Log.d("***DEBUG***", "Inside onClickGoogle");
 
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.web_client_id))
+                .requestEmail()
+                .build();
+
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     public void onClickFacebook(View v) {
+        Log.d("***DEBUG***", "Inside onClickFacebook");
 
+    // Callback registration
+            LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                @Override
+                public void onSuccess(LoginResult loginResult) {
+                    // App code
+                    Log.d("***DEBUG***", "Inside onClickFacebook success");
+                }
+
+                @Override
+                public void onCancel() {
+                    // App code
+                    Log.d("***DEBUG***", "Inside onClickFacebook cancel");
+                }
+
+                @Override
+                public void onError(FacebookException exception) {
+                    // App code
+                    Log.d("***DEBUG***", "Inside onClickFacebook error");
+                }
+            });
     }
 
     public void onClickCreateAccount(View v) {
@@ -162,7 +224,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(ctx, "Passwords do not match", Toast.LENGTH_SHORT).show();
                         }
                         else {
-                            createAccount(user, pass, dialogInterface);
+                            createDefaultAccount(user, pass, dialogInterface);
                             Toast.makeText(ctx, "Creating Account...", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -175,18 +237,18 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void createAccount(String username, String password, final DialogInterface dialogInterface) {
+    public void createDefaultAccount(String username, String password, final DialogInterface dialogInterface) {
+        Log.d("***DEBUG***", "inside createDefaultAccount");
         mAuth.createUserWithEmailAndPassword(username, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            //Log.d("***LOG***", createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(ctx, "Account Created Successfully",Toast.LENGTH_SHORT).show();
                             dialogInterface.dismiss();
-                            Intent intent = new Intent(ctx, MainActivity.class);
+                            Intent intent = new Intent(ctx, LibraryActivity.class);
                             intent.putExtra("userData", user);
                             startActivity(intent);
                         } else {
@@ -206,8 +268,9 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    public void signIn(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
+    public void signInDefaultCredentials(final String username, final String password) {
+        Log.d("***DEBUG***", "inside signInDefaultCredentials");
+        mAuth.signInWithEmailAndPassword(username, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -215,33 +278,108 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("***LOG***", "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //proceed to MainActivity new intent
-                            Intent intent = new Intent(ctx, MainActivity.class);
-                            intent.putExtra("userData", user);
-                            startActivity(intent);
-                        } else {
-                            // If sign in fails, display a message to the user.
+                            if(cbSaveLogin.isChecked()) {
+                                storeCredentials(username, password);
+                            }
+                            else {
+                                removeCredentials();
+                            }
+                            startLibraryActivity();
+                        }
+                        else if(task.getException() instanceof FirebaseAuthInvalidUserException) {
+                            Log.w("***LOG***", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(ctx, "Account does not exist",Toast.LENGTH_SHORT).show();
+                        }
+                        else {
                             Log.w("***LOG***", "signInWithEmail:failure", task.getException());
                             Toast.makeText(ctx, "Authentication failed.",Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
                         }
                     }
                 });
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            email = user.getEmail();
-            Uri photoUrl = user.getPhotoUrl();
+    }
 
-            // Check if user's email is verified
-            boolean emailVerified = user.isEmailVerified();
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d("***DEBUG***", "inside firebaseAuthWithGoogle" + acct.getId());
 
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            String uid = user.getUid();
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("***DEBUG***", "signInWithCredential:success");
+                            startLibraryActivity();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("***DEBUG***", "signInWithCredential:failure", task.getException());
+                            Toast.makeText(ctx, "Authentication failed.",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                // Google Sign In failed, update UI appropriately
+                Log.w("***DEBUG***", "Google sign in failed", e);
+                // ...
+            }
         }
+        else{
+            Log.d("***DEBUG***", "Inside onClickFacebook result");
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+            super.onActivityResult(requestCode, resultCode, data);
+            AccessToken accessToken = AccessToken.getCurrentAccessToken();
+            boolean isLoggedIn = accessToken != null && !accessToken.isExpired();
+            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile"));
+            startLibraryActivity();
+        }
+    }
+
+    public void storeCredentials(String username, String password) {
+
+        try {
+            //SharedPreferences.Editor editor = new SecurePreferences(this, password, "my_user_prefs.xml").edit();
+            loginPrefsEditor = loginPreferences.edit();
+            loginPrefsEditor.putString("username", username);
+            loginPrefsEditor.putString("password", password);
+            loginPrefsEditor.putBoolean("rememberMe", true);
+
+            loginPrefsEditor.apply();
+
+        }
+        catch(Exception e) {
+
+        }
+    }
+
+    public void removeCredentials() {
+        Log.d("***DEBUG***", "inside removeCredentials");
+
+        loginPrefsEditor = loginPreferences.edit();
+        loginPrefsEditor.clear();
+        loginPrefsEditor.apply();
+    }
+
+    public void startLibraryActivity() {
+        Log.d("***DEBUG***", "inside startLibraryActivity");
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        //proceed to LibraryActivity new intent
+        Intent intent = new Intent(ctx, LibraryActivity.class);
+        intent.putExtra("userData", user);
+        startActivity(intent);
     }
 
 }

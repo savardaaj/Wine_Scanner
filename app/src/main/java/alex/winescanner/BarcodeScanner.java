@@ -12,7 +12,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class BarcodeScanner extends AppCompatActivity {
 
@@ -21,13 +20,13 @@ public class BarcodeScanner extends AppCompatActivity {
     Button reviewSelection;
 
     ScanDataHandler scanDataHandler;
-    Wine wine;
-    ArrayList<Wine> wineList;
+    BarcodeWine barcodeWine;
+    ArrayList<BarcodeWine> barcodeWineList;
     int wineCount;
 
     private void init() {
         wineCount = 0;
-        wineList = new ArrayList<Wine>();
+        barcodeWineList = new ArrayList<BarcodeWine>();
         scanDataHandler = new ScanDataHandler();
     }
 
@@ -38,7 +37,7 @@ public class BarcodeScanner extends AppCompatActivity {
 
         init();
 
-        goBack = (Button) findViewById(R.id.btnGoBack);
+        goBack = findViewById(R.id.btnGoBack);
         assert goBack != null;
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +46,7 @@ public class BarcodeScanner extends AppCompatActivity {
             }
         });
 
-        reviewSelection = (Button) findViewById(R.id.btnReviewSelection);
+        reviewSelection = findViewById(R.id.btnReviewSelection);
         assert reviewSelection != null;
         reviewSelection.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +56,7 @@ public class BarcodeScanner extends AppCompatActivity {
         });
 
 
-        scan = (Button) findViewById(R.id.btnScan);
+        scan = findViewById(R.id.btnScan);
         assert scan != null;
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,19 +102,22 @@ public class BarcodeScanner extends AppCompatActivity {
             Log.d("ScanContent: ", scanContent);
             Log.d("ScanFormat: ", scanFormat);
 
-            //TODO: FOR TESTING ONLY
-            scanContent = "31259001043";
-            if(scanContent != null) {
+
+            if(!scanContent.equals("")) {
                 scanDataHandler.sendRequest(scanContent);
 
-                wine = scanDataHandler.getWine();
+                barcodeWine = scanDataHandler.getBarcodeWine();
 
                 Log.d("beforeWineLoop", "");
-                if(wine != null) {
-                    wineList.add(wine);
+                if(barcodeWine != null) {
+                    barcodeWineList.add(barcodeWine);
                     wineCount++;
                 }
             }
+            else {
+                Toast.makeText(getApplicationContext(),"No scan data received!", Toast.LENGTH_SHORT).show();
+            }
+
 
         }
         else {
@@ -128,9 +130,7 @@ public class BarcodeScanner extends AppCompatActivity {
         Log.d("ReviewSelection", "");
         //do something in response to button
         Intent intent = new Intent(this, ReviewSelectionScreen.class);
-        intent.putExtra("WineList", wineList);
-        //intent.putParcelableArrayListExtra("WineList", wineList);
-        intent.putExtra("wineCount", wineCount);
+        intent.putExtra("WineList", barcodeWineList);
         startActivity(intent);
     }
 }

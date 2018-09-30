@@ -55,7 +55,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="I describe this wine as being garbage. Laks flavor and promotes acidity"
+        android:text="I describe this barcodeWine as being garbage. Laks flavor and promotes acidity"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="@+id/comment_view_container"
         app:layout_constraintEnd_toEndOf="parent"

@@ -24,10 +24,5 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/activity_nav_drawer" />
 
-    <!-- excluding because I dont know how to use it properly with drawer layout
-    <include
-        layout="@layout/content_library"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />-->
 
 </android.support.v4.widget.DrawerLayout>

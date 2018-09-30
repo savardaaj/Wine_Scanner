@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/primary_gradient">
+    android:background="@drawable/primary_gradient"
+    tools:context=".LoginActivity">
 
     <TextView
         android:id="@+id/tvLoginTitle"
         android:layout_width="wrap_content"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="67dp"
+        android:layout_marginTop="80dp"
         android:fontFamily="@font/comfortaa_light"
         android:text="Wine Scanner"
         android:textColor="@android:color/white"
@@ -22,14 +24,14 @@
         android:id="@+id/etUsername"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvLoginTitle"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="205dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="196dp"
         android:background="#30000000"
         android:drawableStart="@drawable/ic_action_user"
         android:ems="10"
         android:fontFamily="@font/comfortaa_light"
-        android:gravity="start"
         android:hint="Username..."
         android:inputType="textPersonName"
         android:textAlignment="center"
@@ -42,9 +44,10 @@
         android:id="@+id/etPassword"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvLoginTitle"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="284dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="243dp"
         android:background="#30000000"
         android:drawableStart="@drawable/ic_action_pass"
         android:ems="10"
@@ -61,15 +64,17 @@
         android:id="@+id/cvLogin"
         android:layout_width="300dp"
         android:layout_height="50dp"
+        android:layout_alignStart="@+id/tvLoginTitle"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="183dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="192dp"
         android:elevation="10dp"
         android:onClick="onClickLogin"
         app:cardBackgroundColor="@color/colorAccent"
         app:cardCornerRadius="25dp">
 
         <RelativeLayout
+            android:id="@+id/rl_login_btn"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -86,12 +91,15 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cv_google_login"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:id="@+id/cv_help_container"
+        android:layout_width="101dp"
+        android:layout_height="25dp"
+        android:layout_alignStart="@+id/tv_create_account"
         android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/textView5"
-        android:layout_marginBottom="37dp"
+        android:layout_marginStart="-29dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginBottom="69dp"
+        android:layout_toStartOf="@+id/login_button"
         android:onClick="onClickGoogle"
         app:cardBackgroundColor="@color/cardview_light_background"
         app:cardCornerRadius="10dp">
@@ -101,8 +109,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="5dp"
-            android:paddingRight="5dp"
             android:paddingTop="5dp"
+            android:paddingRight="5dp"
             app:srcCompat="@drawable/ic_google_icon" />
     </android.support.v7.widget.CardView>
 
@@ -110,9 +118,8 @@
         android:id="@+id/cv_facebook_login"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_alignEnd="@+id/textView5"
-        android:layout_alignTop="@+id/cv_google_login"
         android:onClick="onClickFacebook"
+        android:visibility="invisible"
         app:cardBackgroundColor="@color/cardview_light_background"
         app:cardCornerRadius="10dp">
 
@@ -120,20 +127,46 @@
             android:id="@+id/imageView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/cv_facebook_login"
             app:srcCompat="@drawable/ic_facebook_icon" />
     </android.support.v7.widget.CardView>
 
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="81dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginEnd="107dp"
+        android:layout_marginBottom="70dp" />
+
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/tv_create_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="119dp"
+        android:layout_marginBottom="130dp"
         android:fontFamily="@font/comfortaa_light"
         android:onClick="onClickCreateAccount"
         android:text="Create Account"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/cb_remember_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/cv_help_container"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="279dp"
+        android:buttonTint="@android:color/white"
+        android:fontFamily="@font/comfortaa_light"
+        android:shadowColor="@android:color/white"
+        android:text="Remember Me"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
 
 </RelativeLayout>

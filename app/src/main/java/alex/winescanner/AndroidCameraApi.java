@@ -92,14 +92,6 @@ public class AndroidCameraApi extends AppCompatActivity {
             }
         });
 
-        reviewSelectionButton = (Button) findViewById(R.id.btn_reviewSelection);
-        assert reviewSelectionButton != null;
-        reviewSelectionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reviewSelection(v);
-            }
-        });
     }
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
@@ -167,12 +159,6 @@ public class AndroidCameraApi extends AppCompatActivity {
         }
     }
 
-    protected void reviewSelection(View view) {
-        Log.d("***DEBUG***", "inside reviewSelection");
-        //do something in response to button
-        Intent intent = new Intent(this, ReviewSelectionScreen.class);
-        startActivity(intent);
-    }
 
     protected void takePicture() {
         Log.d("***DEBUG***", "inside takePicture");
