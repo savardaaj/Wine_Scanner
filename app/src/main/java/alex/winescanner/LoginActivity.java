@@ -112,7 +112,6 @@ public class LoginActivity extends AppCompatActivity {
         if(!username.equals("") && !password.equals("")) {
             signInDefaultCredentials(username, password);
         }
-
     }
 
     public void onClickGoogle(View v) {
@@ -133,7 +132,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onClickFacebook(View v) {
         Log.d("***DEBUG***", "Inside onClickFacebook");
 
-    // Callback registration
+            // Callback registration
             LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
@@ -333,9 +332,9 @@ public class LoginActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w("***DEBUG***", "Google sign in failed", e);
-                // ...
             }
         }
+        //Facebook sign in
         else{
             Log.d("***DEBUG***", "Inside onClickFacebook result");
             callbackManager.onActivityResult(requestCode, resultCode, data);

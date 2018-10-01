@@ -24,10 +24,8 @@ import java.io.File;
 
 public class NewWineEntryActivity extends AppCompatActivity {
 
-    private ViewGroup mConstraintLayout;
     private int NEW_WR_IMAGE = 2;
-    View rootView;
-    LayoutInflater li;
+
     WineReview existingWineReview;
     WineReview newWineReview;
 

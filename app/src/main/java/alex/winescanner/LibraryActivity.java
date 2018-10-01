@@ -100,6 +100,11 @@ public class LibraryActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        LayoutInflater inflater = LayoutInflater.from(this);
+        LinearLayout scrollContainer = findViewById(R.id.content_library_container);
+        View loading = inflater.inflate(R.layout.loading_screen, null, false);
+        scrollContainer.addView(loading);
+
         //calls load barcodeWine reviews after successful get
         getWineReviews(fs);
     }
@@ -349,6 +354,8 @@ public class LibraryActivity extends AppCompatActivity
             scrollContainer.addView(wineCard);
         }
 
+
+
     }
 
     public void onClickHelpShare(View v) {
@@ -401,7 +408,6 @@ public class LibraryActivity extends AppCompatActivity
 
     public void restoreWineReview(WineReview wr) {
         Log.d("***Debug***", "inside LibraryActivity: restoreWineReview");
-        wineReviewArrayList.add(wr);
         reAddWineReview(wr);
     }
 
