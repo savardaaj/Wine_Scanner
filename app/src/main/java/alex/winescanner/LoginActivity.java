@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -18,7 +19,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -59,9 +62,14 @@ public class LoginActivity extends AppCompatActivity {
 
     CallbackManager callbackManager;
 
+    RelativeLayout rl_login;
+
     EditText etUsername;
     EditText etPassword;
     CheckBox cbSaveLogin;
+    CardView cvLogin;
+
+    GoogleSignInClient mGoogleSignInClient;
 
 
     @Override
@@ -73,9 +81,12 @@ public class LoginActivity extends AppCompatActivity {
         try {
             ctx = this;
 
+            rl_login = findViewById(R.id.rl_login);
+
             etUsername = findViewById(R.id.etUsername);
             etPassword = findViewById(R.id.etPassword);
             cbSaveLogin = findViewById(R.id.cb_remember_login);
+            cvLogin = rl_login.findViewById(R.id.cv_login);
 
             mAuth = FirebaseAuth.getInstance();
 
@@ -98,19 +109,36 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onStart() {
+        Log.d("***Debug***", "inside onStart");
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if(mAuth != null) {
+            // Check if user is signed in (non-null) and update UI accordingly.
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if(currentUser != null) {
+                //TODO: handle user already signed in
+            }
+        }
+
     }
 
     public void onClickLogin(View v) {
         Log.d("***DEBUG***", "Inside onClickLogin");
+
+        cvLogin.setClickable(false);
+
+        signOutGoogle();
+        signOutFacebook();
 
         String username = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString();
 
         if(!username.equals("") && !password.equals("")) {
             signInDefaultCredentials(username, password);
+        }
+        else {
+            Toast.makeText(this, "Username or password must be populated", Toast.LENGTH_SHORT).show();
+            cvLogin.setClickable(true);
         }
     }
 
@@ -123,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
-        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -211,15 +239,19 @@ public class LoginActivity extends AppCompatActivity {
 
                         //password validation
                         if(user.equals("")) {
+
                             Toast.makeText(ctx, "Username cannot be blank", Toast.LENGTH_SHORT).show();
                         }
                         else if(pass.equals("")) {
+
                             Toast.makeText(ctx, "Password cannot be blank", Toast.LENGTH_SHORT).show();
                         }
                         else if(pass.length() < 6) {
+
                             Toast.makeText(ctx, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
                         }
                         else if(!pass.equals(confirmPass)) {
+                            //iv_pwValid.setVisibility(View.VISIBLE);
                             Toast.makeText(ctx, "Passwords do not match", Toast.LENGTH_SHORT).show();
                         }
                         else {
@@ -287,12 +319,15 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         else if(task.getException() instanceof FirebaseAuthInvalidUserException) {
                             Log.w("***LOG***", "signInWithEmail:failure", task.getException());
+
                             Toast.makeText(ctx, "Account does not exist",Toast.LENGTH_SHORT).show();
                         }
                         else {
                             Log.w("***LOG***", "signInWithEmail:failure", task.getException());
+
                             Toast.makeText(ctx, "Authentication failed.",Toast.LENGTH_SHORT).show();
                         }
+                        cvLogin.setClickable(true);
                     }
                 });
     }
@@ -379,6 +414,22 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(ctx, LibraryActivity.class);
         intent.putExtra("userData", user);
         startActivity(intent);
+    }
+
+    private void signOutGoogle() {
+        if(mGoogleSignInClient != null) {
+            mGoogleSignInClient.signOut()
+                    .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            // ...
+                        }
+                    });
+        }
+    }
+
+    private void signOutFacebook() {
+        LoginManager.getInstance().logOut();
     }
 
 }

@@ -7,15 +7,23 @@
         <item
             android:id="@+id/nav_add_wine"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/add_a_wine" />
+            android:title="@string/add_a_wine"
+            android:textColor="@android:color/white"/>
+        <item
+            android:id="@+id/nav_add_wine_by_barcode"
+            android:icon="@drawable/ic_barcode_thick"
+            android:title="@string/add_a_wine_by_barcode"
+            android:textColor="@android:color/white"/>
         <item
             android:id="@+id/nav_compare_wine"
-            android:icon="@drawable/ic_barcode_thick"
-            android:title="@string/compare_wines" />
+            android:icon="@drawable/ic_two_wine_bottles"
+            android:title="@string/compare_wines"
+            android:textColor="@android:color/white"/>
         <item
             android:id="@+id/nav_library"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/nav_library" />
+            android:title="@string/nav_library"
+            android:textColor="@android:color/white"/>
     </group>
 
     <item android:title="Communicate">
@@ -23,7 +31,8 @@
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Share"
+                android:textColor="@android:color/white"/>
         </menu>
     </item>
 

@@ -32,6 +32,7 @@ public class CardDetailsActivity extends AppCompatActivity {
     EditText txtWineType;
     EditText txtWineYear;
     EditText txtWineLocation;
+    EditText txtWineBarcode;
     EditText txtWineDescription;
     ImageView ivWineImage;
     ImageView ivPlaceholderAdd;
@@ -51,6 +52,7 @@ public class CardDetailsActivity extends AppCompatActivity {
         txtWineType =  cl.findViewById(R.id.txtWineType);
         txtWineYear =  cl.findViewById(R.id.txtWineYear);
         txtWineLocation =  cl.findViewById(R.id.txtWineLocation);
+        txtWineBarcode = cl.findViewById(R.id.txt_barcode);
         txtWineDescription =  cl.findViewById(R.id.txtWineDescription);
         wineRating =  cl.findViewById(R.id.ratingBar2);
         ivWineImage = cl.findViewById(R.id.iv_wine_picture);
@@ -75,6 +77,7 @@ public class CardDetailsActivity extends AppCompatActivity {
             txtWineType.setText(wr.type);
             txtWineYear.setText(wr.year);
             txtWineLocation.setText(wr.location);
+            txtWineBarcode.setText(wr.barcode);
             txtWineDescription.setText(wr.description);
             wineRating.setRating(wr.rating);
 

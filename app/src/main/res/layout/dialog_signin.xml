@@ -1,54 +1,108 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ll_dialog_container"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/cardview_dark_background"
-    android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:background="@color/cardview_dark_background">
 
     <EditText
         android:id="@+id/et_dialog_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="@font/comfortaa_light"
         android:hint="Username... (test@123.com)"
         android:inputType="textEmailAddress"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/darker_gray"
-        android:textColorLink="@android:color/darker_gray" />
+        android:textColorLink="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/et_dialog_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/comfortaa_light"
         android:hint="Password... (6 char min)"
         android:inputType="textVisiblePassword"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/darker_gray"
-        android:textColorLink="@android:color/darker_gray" />
+        android:textColorLink="@android:color/darker_gray"
+        app:layout_constraintBottom_toTopOf="@+id/et_dialog_confirm_password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_dialog_username" />
 
     <EditText
         android:id="@+id/et_dialog_confirm_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
         android:fontFamily="@font/comfortaa_light"
         android:hint="Confirm Password..."
         android:inputType="textVisiblePassword"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/darker_gray"
-        android:textColorLink="@android:color/darker_gray" />
+        android:textColorLink="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.441" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/iv_pwvalid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="360dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_checkmark_outline"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/et_dialog_password"
+        app:layout_constraintEnd_toEndOf="@+id/et_dialog_password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/et_dialog_password" />
+
+    <ImageView
+        android:id="@+id/iv_pwinvalid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="360dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_access_denied"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/et_dialog_password"
+        app:layout_constraintEnd_toEndOf="@+id/et_dialog_password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/et_dialog_password" />
+
+    <ImageView
+        android:id="@+id/iv_pw2valid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="360dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_checkmark_outline"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/et_dialog_confirm_password"
+        app:layout_constraintEnd_toEndOf="@+id/et_dialog_password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/et_dialog_confirm_password" />
+
+    <ImageView
+        android:id="@+id/iv_pw2invalid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="360dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_access_denied"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/et_dialog_confirm_password"
+        app:layout_constraintEnd_toEndOf="@+id/et_dialog_password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/et_dialog_confirm_password" />
+
+</android.support.constraint.ConstraintLayout>

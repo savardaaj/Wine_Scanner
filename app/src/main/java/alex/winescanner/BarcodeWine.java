@@ -14,7 +14,11 @@ public class BarcodeWine implements Serializable{
     String[] images;
 
     public BarcodeWine() {
-
+        title = "";
+        description = "";
+        brand = "";
+        color = "";
+        upc = "";
     }
 
     public BarcodeWine(String description, String title, String upc, String brand, String color, double lowest_recorded_price, double highest_recorded_price, String[] images) {

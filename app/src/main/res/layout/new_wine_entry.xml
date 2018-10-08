@@ -29,7 +29,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:elevation="1dp"
+        android:elevation="10dp"
         android:onClick="onClickAddWineImage"
         android:src="@drawable/ic_wine"
         app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
@@ -43,7 +43,7 @@
         android:id="@+id/iv_placeholder_add"
         android:layout_width="41dp"
         android:layout_height="36dp"
-        android:elevation="0dp"
+        android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_wine_picture"
         app:layout_constraintEnd_toEndOf="@+id/iv_wine_picture"
         app:layout_constraintHorizontal_bias="0.921"
@@ -61,7 +61,7 @@
         android:background="@color/colorBackground"
         android:ems="10"
         android:fontFamily="@font/comfortaa_light"
-        android:hint="Name..."
+        android:hint="Name... *"
         android:inputType="text"
         android:textAlignment="viewStart"
         android:textColor="@android:color/white"
@@ -95,27 +95,26 @@
         app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
         app:layout_constraintVertical_bias="0.110000014" />
 
-    <EditText
-        android:id="@+id/txtWineType"
-        style="@style/Widget.AppCompat.EditText"
+    <AutoCompleteTextView
+        android:id="@+id/ac_type"
         android:layout_width="181dp"
         android:layout_height="25dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:background="@color/colorBackground"
-        android:ems="10"
         android:fontFamily="@font/comfortaa_light"
         android:hint="Type..."
-        android:inputType="text"
-        android:textAlignment="viewStart"
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGreenButton"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
+        app:layout_constraintHorizontal_bias="0.636"
         app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
-        app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="0.18" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.167" />
 
     <EditText
         android:id="@+id/txtWineYear"
@@ -162,6 +161,31 @@
         app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
         app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
         app:layout_constraintVertical_bias="0.31" />
+
+    <EditText
+        android:id="@+id/txt_barcode"
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="173dp"
+        android:layout_height="16dp"
+        android:background="@color/colorPrimary"
+        android:elevation="0dp"
+        android:ems="10"
+        android:focusable="false"
+        android:fontFamily="@font/comfortaa_light"
+        android:hint="[scan barcode]"
+        android:inputType="text"
+        android:letterSpacing=".3"
+        android:onClick="onClickUpdateBarcode"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textColorHint="@color/colorGreenButton"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/txtWineDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.033"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_wine_picture"
+        app:layout_constraintVertical_bias="0.051" />
 
     <RatingBar
         android:id="@+id/ratingBar2"
@@ -258,7 +282,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        />
 
     <android.support.v7.widget.CardView
         android:id="@+id/cv_help_container"

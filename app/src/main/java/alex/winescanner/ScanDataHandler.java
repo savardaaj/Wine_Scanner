@@ -75,13 +75,31 @@ public class ScanDataHandler {
                 Log.d("***DEBUG***","No data found for barcode");
             }
             else {
-                barcodeWine.setTitle(jsonResult.getString("title"));
-                barcodeWine.setDescription(jsonResult.getString("description"));
-                barcodeWine.setUpc(jsonResult.getString("upc"));
-                barcodeWine.setBrand(jsonResult.getString("brand"));
-                barcodeWine.setColor(jsonResult.getString("color"));
-                barcodeWine.setLowest_recorded_price(Double.parseDouble(jsonResult.getString("lowest_recorded_price")));
-                barcodeWine.setHighest_recorded_price(Double.parseDouble(jsonResult.getString("highest_recorded_price")));
+                String title = jsonResult.getString("title");
+                String description = jsonResult.getString("description");
+                String brand = jsonResult.getString("brand");
+                String color = jsonResult.getString("color");
+                Double lowest = Double.parseDouble(jsonResult.getString("lowest_recorded_price"));
+                Double highest = Double.parseDouble(jsonResult.getString("highest_recorded_price"));
+
+                if(title != null && !title.isEmpty()) {
+                    barcodeWine.setTitle(title);
+                }
+                if(description != null && !description.isEmpty()) {
+                    barcodeWine.setDescription(description);
+                }
+                if(brand != null && !brand.isEmpty()) {
+                    barcodeWine.setBrand(brand);
+                }
+                if(color != null && !color.isEmpty()) {
+                    barcodeWine.setColor(color);
+                }
+                if(!lowest.isNaN() && lowest != null) {
+                    barcodeWine.setLowest_recorded_price(lowest);
+                }
+                if(!highest.isNaN() && highest != null) {
+                    barcodeWine.setHighest_recorded_price(highest);
+                }
 
                 Log.d("***DEBUG***", "pop wine obj title" + barcodeWine.title);
 
@@ -96,7 +114,7 @@ public class ScanDataHandler {
                     }
                 }
 
-                barcodeWine.setImages(jsonImages);
+                //barcodeWine.setImages(jsonImages);
                 wineCount++;
             }
 

@@ -62,6 +62,8 @@ public class LibraryActivity extends AppCompatActivity
     private static int NEW_WR = 1;
     private static int EDIT_WR = 2;
     private static int COMPARE = 3;
+    private static int SINGLE_ENTRY = 4;
+
     private StorageReference storageRef;
     //TODO: sign out: FirebaseAuth.getInstance().signOut();
 
@@ -111,7 +113,7 @@ public class LibraryActivity extends AppCompatActivity
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("***Debug***", "inside LibraryActivity: onActivityResult");
+        Log.d("***Debug***", "inside LibraryActivity: onActivityResult: " + requestCode);
 
         String wineReviewJSON;
 
@@ -150,6 +152,21 @@ public class LibraryActivity extends AppCompatActivity
                 else if(requestCode == COMPARE) {
                     //TODO process array of barcodes to compare
 
+                }
+                else if(requestCode == SINGLE_ENTRY) {
+                    Bundle bundle = data.getExtras();
+                    if(bundle != null) {
+                        Log.d("***Debug***", "Bundle: " + bundle);
+                        BarcodeWine bcWine = (BarcodeWine) data.getSerializableExtra("barcodeWine");
+                        Log.d("***Debug***", "bcWine" + bcWine);
+                        Log.d("***Debug***", "bcWine.upc " + bcWine.upc);
+                        if (bcWine != null) {
+                            //call newwineentry
+                            Intent i = new Intent(this, NewWineEntryActivity.class);
+                            i.putExtra("barcodeWine", bcWine);
+                            startActivityForResult(i, NEW_WR);
+                        }
+                    }
                 }
             }
         }
@@ -201,14 +218,21 @@ public class LibraryActivity extends AppCompatActivity
         if (id == R.id.nav_add_wine) {
             Intent intent = new Intent(this, NewWineEntryActivity.class);
             startActivityForResult(intent, NEW_WR);
-
-        } else if (id == R.id.nav_compare_wine) {
+        }
+        else if (id == R.id.nav_add_wine_by_barcode) {
+            Intent intent = new Intent(this, BarcodeScanner.class);
+            intent.putExtra("requestCode", SINGLE_ENTRY);
+            startActivityForResult(intent, SINGLE_ENTRY);
+        }
+        else if (id == R.id.nav_compare_wine) {
             Intent intent = new Intent(this, BarcodeScanner.class);
             startActivityForResult(intent, COMPARE);
 
-        } else if (id == R.id.nav_library) {
+        }
+        else if (id == R.id.nav_library) {
             loadWineReviews();
-        } else if (id == R.id.nav_share) {
+        }
+        else if (id == R.id.nav_share) {
 
         }
 
