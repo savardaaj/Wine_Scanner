@@ -2,6 +2,7 @@ package alex.winescanner;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,7 +18,17 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -25,6 +36,8 @@ public class CardDetailsActivity extends AppCompatActivity {
 
     ArrayList<WineReview> wineReviewArrayList;
     WineReview wr;
+
+    DataBaseHandler dbh;
 
     ConstraintLayout cl;
     EditText txtWineName;
@@ -39,12 +52,19 @@ public class CardDetailsActivity extends AppCompatActivity {
 
     RatingBar wineRating;
 
+    private StorageReference storageRef;
+    FirebaseFirestore fs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_details);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        FirebaseApp.initializeApp(this);
+        fs = FirebaseFirestore.getInstance();
+        storageRef = FirebaseStorage.getInstance().getReference();
 
         cl = findViewById(R.id.content_new_wine_entry);
         txtWineName =  cl.findViewById(R.id.txtWineName);
@@ -56,28 +76,28 @@ public class CardDetailsActivity extends AppCompatActivity {
         txtWineDescription =  cl.findViewById(R.id.txtWineDescription);
         wineRating =  cl.findViewById(R.id.ratingBar2);
         ivWineImage = cl.findViewById(R.id.iv_wine_picture);
-        ivPlaceholderAdd = cl.findViewById(R.id.iv_placeholder_add);
 
         Intent intent = getIntent();
         if(intent != null) {
             String JSON  = intent.getStringExtra("details");
             wr = new Gson().fromJson(JSON, WineReview.class);
-            Log.d("***DEBUG***", "Inside new barcodeWine entry " + wr);
             loadWineReview(wr);
         }
+        getComments();
     }
 
     public void loadWineReview(WineReview wr) {
         Log.d("***Debug***", "inside loadWineReview");
 
         try {
+            String barcode = "[" + wr.barcode + "]";
             //populate form from existing data
             txtWineName.setText(wr.name);
             txtWineMaker.setText(wr.maker);
             txtWineType.setText(wr.type);
             txtWineYear.setText(wr.year);
             txtWineLocation.setText(wr.location);
-            txtWineBarcode.setText(wr.barcode);
+            txtWineBarcode.setText(barcode);
             txtWineDescription.setText(wr.description);
             wineRating.setRating(wr.rating);
 
@@ -93,6 +113,66 @@ public class CardDetailsActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LibraryActivity.class);
             setResult(RESULT_CANCELED, intent);
         }
+    }
+
+    public void getComments() {
+        Log.d("***Debug***", "inside getComments");
+        //query all reviews with the same barcode
+
+        queryWineReviews(fs, wr);
+        //Create a card for each one
+    }
+
+    public void loadComments() {
+        Log.d("***Debug***", "inside loadComments");
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        LinearLayout scrollContainer = findViewById(R.id.content_card_details_container);
+        //scrollContainer.removeAllViews();
+
+        //Create a card for each one
+        for(WineReview wr : wineReviewArrayList) {
+            //setup layout stuff
+            View comment = inflater.inflate(R.layout.content_comment, null, false);
+            comment.setPadding(0,0,0, 10);
+            comment.setTag(wr);
+
+            //initialize the layout fields
+            TextView txtProfileName = comment.findViewById(R.id.tv_profile_name);
+            ImageView ivProfilePicture = comment.findViewById(R.id.iv_profile);
+            RatingBar rbRating = comment.findViewById(R.id.rb_comment);
+            TextView txtDescription = comment.findViewById(R.id.tv_comment_description);
+
+            //txtProfileName.setText(user.name);
+            //ivProfilePicture.setImageDrawable(user.profile_picture);
+            rbRating.setRating(wr.rating);
+            txtDescription.setText(wr.description);
+
+            scrollContainer.addView(comment);
+        }
+    }
+
+    private void queryWineReviews(FirebaseFirestore db, WineReview wr) {
+        Log.d("***Debug***", "inside queryWineReview");
+        wineReviewArrayList = new ArrayList<WineReview>();
+        db.collection("WineReviews").whereEqualTo("barcode", wr.barcode).whereEqualTo("shareReview", true)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("***DEBUG***", document.getId() + " => " + document.getData());
+                                WineReview wr = document.toObject(WineReview.class);
+                                wineReviewArrayList.add(wr);
+                            }
+                            loadComments();
+                        } else {
+                            Log.d("***ERROR***", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
     }
 
 }

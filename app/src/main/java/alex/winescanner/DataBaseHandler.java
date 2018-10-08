@@ -23,6 +23,7 @@ import static android.support.constraint.Constraints.TAG;
 public class DataBaseHandler {
 
     public String docId;
+    ArrayList<WineReview> wineReviewArrayList;
 
     public void updateWineReview(WineReview wr, FirebaseFirestore db) {
         Log.d("***Debug***", "inside updateWineReview");
@@ -60,6 +61,37 @@ public class DataBaseHandler {
             Log.w("***Debug***", "Error updating document", e);
         }
 
+    }
+
+    private void queryWineReviews(FirebaseFirestore db, WineReview wr) {
+
+        wineReviewArrayList = new ArrayList<WineReview>();
+        db.collection("WineReviews").whereEqualTo("barcode", wr.barcode)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("***DEBUG***", document.getId() + " => " + document.getData());
+                                WineReview wr = document.toObject(WineReview.class);
+                                wineReviewArrayList.add(wr);
+                            }
+                            returnWineReviews();
+                        } else {
+                            Log.d("***ERROR***", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public void getWineReviews(FirebaseFirestore db, WineReview wr) {
+        queryWineReviews(db, wr);
+    }
+
+    public List<WineReview> returnWineReviews() {
+        return wineReviewArrayList;
     }
 
 }

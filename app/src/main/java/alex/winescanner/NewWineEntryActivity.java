@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -79,6 +80,8 @@ public class NewWineEntryActivity extends AppCompatActivity {
         ivPlaceholderAdd = cl.findViewById(R.id.iv_placeholder_add);
         cbShareReview = cl.findViewById(R.id.cb_share_review);
 
+        cbShareReview.setTypeface(ResourcesCompat.getFont(this, R.font.comfortaa_light));
+
         txtWineName.clearFocus();
 
         Intent data = getIntent();
@@ -152,6 +155,8 @@ public class NewWineEntryActivity extends AppCompatActivity {
         Log.d("***DEBUG***", "Inside populateExistingReview");
 
         try {
+            String barcode = "[" + existingWineReview.barcode + "]";
+
             //populate form from existing data
             txtWineName.setText(existingWineReview.name);
             txtWineMaker.setText(existingWineReview.maker);
@@ -159,7 +164,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
             txtWineYear.setText(existingWineReview.year);
             txtWineLocation.setText(existingWineReview.location);
             txtWineDescription.setText(existingWineReview.description);
-            txtBarcode.setText(existingWineReview.barcode);
+            txtBarcode.setText(barcode);
             wineRating.setRating(existingWineReview.rating);
             cbShareReview.setChecked(existingWineReview.shareReview);
 
@@ -217,7 +222,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
             newWineReview.year = txtWineYear.getText().toString();
             newWineReview.location = txtWineLocation.getText().toString();
             newWineReview.description = txtWineDescription.getText().toString();
-            newWineReview.barcode = txtBarcode.getText().toString();
+            newWineReview.barcode = txtBarcode.getText().toString().replaceAll("[^0-9]", "");
             newWineReview.rating = wineRating.getRating();
             newWineReview.shareReview = cbShareReview.isChecked();
 

@@ -16,8 +16,8 @@
         <include
             layout="@layout/content_wine_entry" />
 
-        <include
-            layout="@layout/content_comment" />
+        <!--<include
+            layout="@layout/content_comment" />-->
 
 
     </LinearLayout>

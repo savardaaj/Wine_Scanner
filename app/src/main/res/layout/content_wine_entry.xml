@@ -32,7 +32,6 @@
         android:hint="[scan barcode]"
         android:inputType="text"
         android:letterSpacing=".3"
-        android:onClick="onClickUpdateBarcode"
         android:textAlignment="center"
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGreenButton"

@@ -307,79 +307,81 @@ public class LibraryActivity extends AppCompatActivity
     public void loadWineReviews() {
         Log.d("***Debug***", "inside loadWineReviews");
 
-        Bitmap myBitmap;
+        try {
+            Bitmap myBitmap;
 
-        //redraw view
-        LayoutInflater inflater = LayoutInflater.from(this);
-        LinearLayout scrollContainer = findViewById(R.id.content_library_container);
-        scrollContainer.removeAllViews();
+            //redraw view
+            LayoutInflater inflater = LayoutInflater.from(this);
+            LinearLayout scrollContainer = findViewById(R.id.content_library_container);
+            scrollContainer.removeAllViews();
 
-        if(wineReviewArrayList.size() < 1) {
-            View placeholder = inflater.inflate(R.layout.placeholder_text, null, false);
-            scrollContainer.addView(placeholder);
-        }
-        else {
-            wineReviewArrayList = sortByRatingDescending(wineReviewArrayList);
-        }
-
-        for(WineReview wr : wineReviewArrayList) {
-
-            if(wr.pictureFilePath != null) {
-                myBitmap = BitmapFactory.decodeFile(wr.pictureFilePath);
-                wr.imageBitmap = myBitmap;
-            }
-
-            //setup layout stuff
-            View wineCard = inflater.inflate(R.layout.wine_card, null, false);
-            wineCard.setPadding(0,0,0, 10);
-            wineCard.setTag(wr);
-
-            TextView remove = wineCard.findViewById(R.id.tvRemove);
-            remove.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    onClickWineCardRemove(v);
-                }
-            });
-
-            //initialize the layout fields
-            TextView wineName = wineCard.findViewById(R.id.tvWineName);
-            ImageView winePicture = wineCard.findViewById(R.id.ivWine_Picture);
-            RatingBar wineRating = wineCard.findViewById(R.id.ratingBar);
-            TextView wineDesc =  wineCard.findViewById(R.id.tvWine_Desc);
-            ImageView shareReview = wineCard.findViewById(R.id.iv_share_active);
-
-            //TODO: Implement rating system
-            TextView wineRatingCount = wineCard.findViewById(R.id.tvRatingsCount);
-            TextView winePts = wineCard.findViewById(R.id.tvWinePoints);
-            TextView wineRatingSource = wineCard.findViewById(R.id.tvWine_Source);
-
-            //set values of imported components
-            wineName.setText((wr.name + " - " + wr.maker));
-            wineRating.setRating(wr.rating);
-            wineDesc.setText(wr.description);
-
-            if(wr.shareReview) {
-                shareReview.setVisibility(View.VISIBLE);
+            if(wineReviewArrayList.size() < 1) {
+                View placeholder = inflater.inflate(R.layout.placeholder_text, null, false);
+                scrollContainer.addView(placeholder);
             }
             else {
-                shareReview.setVisibility(View.INVISIBLE);
+                wineReviewArrayList = sortByRatingDescending(wineReviewArrayList);
             }
 
-            //null out unused fields atm
-            wineRatingCount.setText("");
-            winePts.setText("");
-            wineRatingSource.setText("");
+            for(WineReview wr : wineReviewArrayList) {
 
-            if(wr.imageBitmap != null) {
-                winePicture.setImageDrawable(new BitmapDrawable(getResources(), wr.imageBitmap));
+                if(wr.pictureFilePath != null) {
+                    myBitmap = BitmapFactory.decodeFile(wr.pictureFilePath);
+                    wr.imageBitmap = myBitmap;
+                }
+
+                //setup layout stuff
+                View wineCard = inflater.inflate(R.layout.wine_card, null, false);
+                wineCard.setPadding(0,0,0, 10);
+                wineCard.setTag(wr);
+
+                TextView remove = wineCard.findViewById(R.id.tvRemove);
+                remove.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        onClickWineCardRemove(v);
+                    }
+                });
+
+                //initialize the layout fields
+                TextView wineName = wineCard.findViewById(R.id.tvWineName);
+                ImageView winePicture = wineCard.findViewById(R.id.ivWine_Picture);
+                RatingBar wineRating = wineCard.findViewById(R.id.ratingBar);
+                TextView wineDesc =  wineCard.findViewById(R.id.tvWine_Desc);
+                ImageView shareReview = wineCard.findViewById(R.id.iv_share_active);
+
+                //TODO: Implement rating system
+                TextView wineRatingCount = wineCard.findViewById(R.id.tvRatingsCount);
+                TextView winePts = wineCard.findViewById(R.id.tvWinePoints);
+                TextView wineRatingSource = wineCard.findViewById(R.id.tvWine_Source);
+
+                //set values of imported components
+                wineName.setText((wr.name + " - " + wr.maker));
+                wineRating.setRating(wr.rating);
+                wineDesc.setText(wr.description);
+
+                if(wr.shareReview) {
+                    shareReview.setVisibility(View.VISIBLE);
+                }
+                else {
+                    shareReview.setVisibility(View.INVISIBLE);
+                }
+
+                //null out unused fields atm
+                wineRatingCount.setText("");
+                winePts.setText("");
+                wineRatingSource.setText("");
+
+                if(wr.imageBitmap != null) {
+                    winePicture.setImageDrawable(new BitmapDrawable(getResources(), wr.imageBitmap));
+                }
+
+                //add Wine card to scroll view
+                scrollContainer.addView(wineCard);
             }
-
-            //add Wine card to scroll view
-            scrollContainer.addView(wineCard);
         }
-
-
-
+        catch(Exception e) {
+            Log.d("***DEUBUG***", "ERROR" + e.getMessage());
+        }
     }
 
     public void onClickHelpShare(View v) {
