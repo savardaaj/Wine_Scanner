@@ -18,6 +18,9 @@
     <string name="wine_title">Josh Wineries Cabernet Sauvignon 2018</string>
     <string name="wine_title2">Josh Josh Josh</string>
     <string name="wine_description">Some description of a barcodeWine that resembles a faint aftertaste or borgoneise, but not so subtle either. A truly magnificant barcodeWine</string>
+    <string name="like_description_none">Your review doesn\'t have any likes yet.</string>
+    <string name="like_description_plural"> people have liked your review!</string>
+    <string name="like_description_singular"> person has liked your review!</string>
     <string name="details">Details</string>
     <string name="choose">Choose</string>
     <string name="edit">Edit</string>

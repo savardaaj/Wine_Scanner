@@ -13,8 +13,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/content_wine_entry" />
+        <include layout="@layout/content_wine_entry" />
+
+        <LinearLayout
+            android:id="@+id/content_card_details_comments"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+        </LinearLayout>
 
         <!--<include
             layout="@layout/content_comment" />-->

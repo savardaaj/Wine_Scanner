@@ -110,7 +110,6 @@
         android:textColor="@color/colorGreenButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
@@ -131,25 +130,11 @@
         android:textColor="@color/colorGreenButton"
         app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.539"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         tools:text="    Edit" />
-
-    <ImageView
-        android:id="@+id/iv_corkscrew_edit"
-        android:layout_width="52dp"
-        android:layout_height="23dp"
-        android:layout_marginBottom="5dp"
-        android:onClick="onClickWineCardEdit"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintHorizontal_bias="0.031"
-        app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
-        app:layout_constraintTop_toBottomOf="@+id/tvWine_Desc"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/ic_corkscrew" />
 
     <TextView
         android:id="@+id/tvWine_Source"

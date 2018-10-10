@@ -9,7 +9,7 @@
 
     <View
         android:id="@+id/new_wine_entry_container"
-        android:layout_width="wrap_content"
+        android:layout_width="413dp"
         android:layout_height="511dp"
         android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -181,6 +181,31 @@
         app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
         app:layout_constraintVertical_bias="0.31" />
 
+    <EditText
+        android:id="@+id/txt_like_description"
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="253dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="28dp"
+        android:background="@color/colorBackground"
+        android:editable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:fontFamily="@font/comfortaa_light"
+        android:hint="Location..."
+        android:inputType="text"
+        android:selectAllOnFocus="true"
+        android:text="@string/like_description_none"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textColorHint="@color/colorGreenButton"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtWineDescription"
+        app:layout_constraintVertical_bias="0.0" />
+
     <RatingBar
         android:id="@+id/ratingBar2"
         android:layout_width="241dp"
@@ -225,5 +250,27 @@
         app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
         app:layout_constraintTop_toBottomOf="@+id/ratingBar2"
         app:layout_constraintVertical_bias="0.068" />
+
+    <CheckBox
+        android:id="@+id/cb_carddetails_isshared"
+        android:layout_width="92dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:buttonTint="@color/colorGreenButton"
+        android:clickable="false"
+        android:contextClickable="false"
+        android:editable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:fontFamily="@font/comfortaa_light"
+        android:longClickable="false"
+        android:text="Shared"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtWineDescription"
+        app:layout_constraintVertical_bias="0.06" />
 
 </android.support.constraint.ConstraintLayout>

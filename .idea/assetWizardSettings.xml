@@ -108,9 +108,9 @@
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="26773b" />
                             <entry key="height" value="25" />
-                            <entry key="outputName" value="ic_two_wine_bottles" />
+                            <entry key="outputName" value="ic_like_inactive" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\Alex\Downloads\Images\two-wine-bottles.svg" />
+                            <entry key="sourceFile" value="C:\Users\Alex\Downloads\Images\like_inactive.svg" />
                             <entry key="width" value="25" />
                           </map>
                         </option>

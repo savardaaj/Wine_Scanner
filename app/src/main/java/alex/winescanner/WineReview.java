@@ -2,7 +2,9 @@ package alex.winescanner;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class WineReview {
@@ -22,6 +24,7 @@ public class WineReview {
     public String userUUID;
     public String barcode;
     public boolean shareReview;
+    public ArrayList<String> likes;
 
     WineReview() {
         this.id = UUID.randomUUID().toString();
@@ -39,6 +42,7 @@ public class WineReview {
         this.userUUID = "";
         this.barcode = "";
         this.shareReview = false;
+        this.likes = new ArrayList<>();
     }
 
     public String getId() {
@@ -46,6 +50,16 @@ public class WineReview {
     }
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getLikesSize() {
+        if(likes != null) {
+
+            if(likes.size() > 0) {
+                return "" + likes.size();
+            }
+        }
+        return "";
     }
 
 }

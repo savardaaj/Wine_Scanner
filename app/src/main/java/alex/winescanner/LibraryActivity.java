@@ -108,7 +108,7 @@ public class LibraryActivity extends AppCompatActivity
         scrollContainer.addView(loading);
 
         //calls load barcodeWine reviews after successful get
-        getWineReviews(fs);
+        dbh.getWineReviews(fs, this, user);
     }
 
     @Override
@@ -124,10 +124,10 @@ public class LibraryActivity extends AppCompatActivity
                     if (wineReviewJSON != null) {
                         WineReview wineReview = new Gson().fromJson(wineReviewJSON, WineReview.class);
                         wineReviewArrayList.add(wineReview);
-                        createWineReview(wineReview, fs);
+                        dbh.createWineReview(fs, this, wineReview, user);
 
                         if(wineReview.pictureFilePath != null) {
-                            //TODO: keep receiving task is not yet complete
+                            //TODO: keep receiving error "task is not yet complete
                             //uploadFile(wineReview);
                         }
                     }
@@ -143,7 +143,7 @@ public class LibraryActivity extends AppCompatActivity
                                     //keep receiving task is not yet complete
                                     //uploadFile(wineReview);
                                 }
-                                updateWineReview(wineReview, fs);
+                                dbh.updateWineReview(fs, this, wineReview);
                                 break;
                             }
                         }
@@ -295,7 +295,7 @@ public class LibraryActivity extends AppCompatActivity
         scrollContainer.addView(wineCard);
 
         //create the review for cloud database
-        createWineReview(wr, fs);
+        dbh.createWineReview(fs, this, wr, user);
 
         //sort and add to local list
 
@@ -324,6 +324,8 @@ public class LibraryActivity extends AppCompatActivity
             }
 
             for(WineReview wr : wineReviewArrayList) {
+
+                //query wr and get the number for that review and the avg rating
 
                 if(wr.pictureFilePath != null) {
                     myBitmap = BitmapFactory.decodeFile(wr.pictureFilePath);
@@ -356,7 +358,7 @@ public class LibraryActivity extends AppCompatActivity
 
                 //set values of imported components
                 wineName.setText((wr.name + " - " + wr.maker));
-                wineRating.setRating(wr.rating);
+                //wineRating.setRating(wr.rating);
                 wineDesc.setText(wr.description);
 
                 if(wr.shareReview) {
@@ -412,9 +414,8 @@ public class LibraryActivity extends AppCompatActivity
 
         }
         if(indexToRemove != 999) {
-            deleteWineReview(wineReviewArrayList.get(indexToRemove), fs);
+            dbh.deleteWineReview(fs, this, wineReviewArrayList.get(indexToRemove));
             wineReviewArrayList.remove(indexToRemove);
-
         }
     }
 
@@ -501,7 +502,10 @@ public class LibraryActivity extends AppCompatActivity
                     Gson gson = new Gson();
                     String wineReviewJSON = gson.toJson(wr);
                     Intent intent = new Intent(this, CardDetailsActivity.class);
-                    intent.putExtra("details", wineReviewJSON);
+                    Bundle extras = new Bundle();
+                    extras.putParcelable("user", user);
+                    extras.putString("details", wineReviewJSON);
+                    intent.putExtras(extras);
                     //startActivityForResult(intent, EDIT_WR);
                     startActivity(intent);
                 }
@@ -513,70 +517,8 @@ public class LibraryActivity extends AppCompatActivity
         }
     }
 
-    public void getWineReviews(FirebaseFirestore db) {
-
-        final ArrayList<WineReview> wineReviewList = new ArrayList<WineReview>();
-        db.collection("WineReviews").whereEqualTo("userUUID", user.getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("***DEBUG***", document.getId() + " => " + document.getData());
-                                WineReview wr = document.toObject(WineReview.class);
-                                wineReviewList.add(wr);
-                            }
-                            //set local list with list returned
-                            wineReviewArrayList = wineReviewList;
-                            loadWineReviews();
-                        } else {
-                            Toast.makeText(ctx, "Error Occurred retrieving reviews", Toast.LENGTH_SHORT).show();
-                            Log.d("***ERROR***", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-    }
-
-    public void createWineReview(final WineReview wr, FirebaseFirestore db) {
-        Log.d("***DEBUG***", "inside CreateWineReview");
-
-        wr.userUUID = user.getUid();
-
-        // Create a new user with a first and last name
-        final Map<String, Object> wineReviewMap = new HashMap<>();
-        wineReviewMap.put("id", wr.getId());
-        wineReviewMap.put("userUUID", wr.userUUID);
-        wineReviewMap.put("barcode", wr.barcode);
-        wineReviewMap.put("name", wr.name);
-        wineReviewMap.put("maker", wr.maker);
-        wineReviewMap.put("type", wr.type);
-        wineReviewMap.put("year", wr.year);
-        wineReviewMap.put("location", wr.location);
-        wineReviewMap.put("description", wr.description);
-        wineReviewMap.put("shareReview", wr.shareReview);
-        wineReviewMap.put("pictureFilePath", wr.pictureFilePath);
-        wineReviewMap.put("imageURL", wr.imageURL);
-        wineReviewMap.put("rating", wr.rating);
-
-        // Add a new document with a generated ID
-        db.collection("WineReviews")
-                .add(wineReviewMap)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("***DEBUG***", "Document added with ID: " + documentReference.getId());
-                        //Store the docReference
-                        saveDocReference(documentReference.getId(), wr);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
+    public void setWineReviewArrayList(ArrayList<WineReview> list) {
+        wineReviewArrayList = list;
     }
 
     public void saveDocReference(String docRef, WineReview wineReview) {
@@ -585,77 +527,10 @@ public class LibraryActivity extends AppCompatActivity
             if(wr.id.equals(wineReview.id)) {
                 //update to save the docId to cloud
                 wr.docId = docRef;
-                updateWineReview(wr, fs);
+                dbh.updateWineReview(fs, this, wr);
                 return;
             }
         }
-    }
-
-    public void updateWineReview(final WineReview wr, FirebaseFirestore db) {
-        Log.d("***Debug***", "inside updateWineReview");
-        // Create a new user with a first and last name
-        final Map<String, Object> wineReviewMap = new HashMap<>();
-
-        try {
-            wineReviewMap.put("id", wr.getId());
-            wineReviewMap.put("userUUID", wr.userUUID);
-            wineReviewMap.put("barcode", wr.barcode);
-            wineReviewMap.put("name", wr.name);
-            wineReviewMap.put("maker", wr.maker);
-            wineReviewMap.put("type", wr.type);
-            wineReviewMap.put("year", wr.year);
-            wineReviewMap.put("location", wr.location);
-            wineReviewMap.put("description", wr.description);
-            wineReviewMap.put("shareReview", wr.shareReview);
-            wineReviewMap.put("pictureFilePath", wr.pictureFilePath);
-            wineReviewMap.put("imageURL", wr.imageURL);
-            wineReviewMap.put("rating", wr.rating);
-            wineReviewMap.put("docId", wr.docId);
-
-            // Add a new document with a generated ID
-            db.collection("WineReviews").document(wr.docId)
-                    .update(wineReviewMap)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("***Debug***", "DocumentSnapshot successfully updated!");
-                            Toast.makeText(ctx, "Updated " + wr.name, Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("***Debug***", "Error updating document", e);
-                            Toast.makeText(ctx, "Failed to update " + wr.name, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-        catch (Exception e) {
-            Log.w("***Debug***", "Error updating document", e);
-            Toast.makeText(ctx, "Failed to update " + wr.name, Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    public void deleteWineReview(final WineReview wineReview, FirebaseFirestore db) {
-        Log.d("***Debug***", "inside deleteWineReview");
-        // Add a new document with a generated ID
-        db.collection("WineReviews").document(wineReview.docId)
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                        Toast.makeText(ctx, "Successfully deleted " + wineReview.name, Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error deleting document", e);
-                        Toast.makeText(ctx, "Failed to delete " + wineReview.name, Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     public void uploadFile(final WineReview wineReview) {
@@ -675,7 +550,7 @@ public class LibraryActivity extends AppCompatActivity
                         //Store the download URL as the barcodeWine review image data
 
                         Toast.makeText(ctx, "Successfully uploaded File " + wineReview.name, Toast.LENGTH_SHORT).show();
-                        updateWineReview(wineReview, fs);
+                        dbh.updateWineReview(fs, ctx, wineReview);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
