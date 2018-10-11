@@ -147,6 +147,7 @@ public class LibraryActivity extends AppCompatActivity
                                     //uploadFile(wineReview);
                                 }
                                 dbh.updateWineReview(fs, this, wineReview);
+                                dbh.getWineReviews(fs, this, user);
                                 break;
                             }
                         }
@@ -333,8 +334,6 @@ public class LibraryActivity extends AppCompatActivity
 
             for(WineReview wr : wineReviewArrayList) {
 
-                //query wr and get the number for that review and the avg rating
-
                 if(wr.pictureFilePath != null) {
                     myBitmap = BitmapFactory.decodeFile(wr.pictureFilePath);
                     wr.imageBitmap = myBitmap;
@@ -395,6 +394,7 @@ public class LibraryActivity extends AppCompatActivity
         catch(Exception e) {
             Log.d("***DEUBUG***", "ERROR" + e.getMessage());
         }
+
     }
 
     public void onClickHelpShare(View v) {

@@ -10,7 +10,7 @@
     <View
         android:id="@+id/new_wine_entry_container"
         android:layout_width="413dp"
-        android:layout_height="511dp"
+        android:layout_height="582dp"
         android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -185,8 +185,7 @@
         android:id="@+id/txt_like_description"
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="253dp"
-        android:layout_height="19dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="31dp"
         android:layout_marginEnd="28dp"
         android:background="@color/colorBackground"
         android:editable="false"
@@ -207,13 +206,13 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <RatingBar
-        android:id="@+id/ratingBar2"
+        android:id="@+id/rb_main_card_details"
         android:layout_width="241dp"
         android:layout_height="44dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:clickable="false"
         android:focusable="false"
         android:isIndicator="true"
@@ -222,9 +221,135 @@
         android:stepSize=".5"
         app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
+        app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
         app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="0.48000002" />
+        app:layout_constraintVertical_bias="0.417" />
+
+    <RelativeLayout
+        android:id="@+id/new_wine_entry_ratings_container"
+        android:layout_width="226dp"
+        android:layout_height="182dp"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
+        app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
+        app:layout_constraintHorizontal_bias="0.454"
+        app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
+        app:layout_constraintTop_toTopOf="@+id/rb_main_card_details"
+        app:layout_constraintVertical_bias="0.251">
+
+        <RatingBar
+            android:id="@+id/rb_sub5"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:rating="0"
+            android:stepSize=".5" />
+
+        <RatingBar
+            android:id="@+id/rb_sub4"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rb_sub5"
+            android:numStars="5"
+            android:rating="0"
+            android:stepSize=".5" />
+
+        <RatingBar
+            android:id="@+id/rb_sub3"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rb_sub4"
+            android:numStars="5"
+            android:rating="0"
+            android:stepSize=".5" />
+
+        <RatingBar
+            android:id="@+id/rb_sub2"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rb_sub3"
+            android:numStars="5"
+            android:rating="0"
+            android:stepSize=".5" />
+
+        <RatingBar
+            android:id="@+id/rb_sub1"
+            style="@style/Widget.AppCompat.RatingBar.Indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rb_sub2"
+            android:layout_marginTop="0dp"
+            android:numStars="5"
+            android:rating="0"
+            android:stepSize=".5" />
+
+        <TextView
+            android:id="@+id/tv_sub5"
+            android:layout_width="40dp"
+            android:layout_height="35dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="184dp"
+            android:layout_marginTop="1dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_sub4"
+            android:layout_width="40dp"
+            android:layout_height="36dp"
+            android:layout_alignBottom="@+id/rb_sub4"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="184dp"
+            android:layout_marginBottom="0dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_sub3"
+            android:layout_width="40dp"
+            android:layout_height="36dp"
+            android:layout_alignBottom="@+id/rb_sub4"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="184dp"
+            android:layout_marginBottom="-37dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_sub2"
+            android:layout_width="40dp"
+            android:layout_height="35dp"
+            android:layout_alignBottom="@+id/rb_sub4"
+            android:layout_alignParentStart="false"
+            android:layout_marginStart="184dp"
+            android:layout_marginBottom="-72dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_sub1"
+            android:layout_width="40dp"
+            android:layout_height="35dp"
+            android:layout_alignBottom="@+id/rb_sub4"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="184dp"
+            android:layout_marginBottom="-107dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+    </RelativeLayout>
 
     <EditText
         android:id="@+id/txtWineDescription"
@@ -246,10 +371,10 @@
         android:textColorHint="@color/colorGreenButton"
         app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
-        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintHorizontal_bias="0.511"
         app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar2"
-        app:layout_constraintVertical_bias="0.068" />
+        app:layout_constraintTop_toBottomOf="@+id/new_wine_entry_ratings_container"
+        app:layout_constraintVertical_bias="0.0" />
 
     <CheckBox
         android:id="@+id/cb_carddetails_isshared"
@@ -271,6 +396,21 @@
         app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtWineDescription"
-        app:layout_constraintVertical_bias="0.06" />
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="22dp"
+        android:layout_height="13dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:onClick="onClickToggleRatings"
+        app:layout_constraintBottom_toBottomOf="@+id/rb_main_card_details"
+        app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/rb_main_card_details"
+        app:layout_constraintTop_toBottomOf="@+id/txtWineLocation"
+        app:layout_constraintVertical_bias="0.884"
+        app:srcCompat="@android:drawable/arrow_down_float" />
 
 </android.support.constraint.ConstraintLayout>

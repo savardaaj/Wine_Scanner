@@ -11,11 +11,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Transformation;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +61,8 @@ public class CardDetailsActivity extends AppCompatActivity {
     ImageView ivWineLike;
     ImageView ivWineLikeInactive;
 
+    boolean ratingsShowing = false;
+
     RatingBar wineRating;
 
     private StorageReference storageRef;
@@ -84,7 +90,6 @@ public class CardDetailsActivity extends AppCompatActivity {
                 user = extras.getParcelable("user");
                 String JSON = extras.getString("details");
                 wr = new Gson().fromJson(JSON, WineReview.class);
-                Log.d("***DEBUG***", "Winereview: " + wr);
                 loadWineReview(wr);
             }
         }
@@ -104,7 +109,7 @@ public class CardDetailsActivity extends AppCompatActivity {
             txtWineBarcode = cl.findViewById(R.id.txt_barcode);
             txtWineDescription =  cl.findViewById(R.id.txtWineDescription);
             txtLikeDescription = cl.findViewById(R.id.txt_like_description);
-            wineRating =  cl.findViewById(R.id.ratingBar2);
+            wineRating =  cl.findViewById(R.id.rb_main_card_details);
             ivWineImage = cl.findViewById(R.id.iv_wine_picture);
             cbIsShared = cl.findViewById(R.id.cb_carddetails_isshared);
             cbIsShared.setTypeface(ResourcesCompat.getFont(this, R.font.comfortaa_light));
@@ -147,7 +152,6 @@ public class CardDetailsActivity extends AppCompatActivity {
 
             }
 
-
         }
         catch(Exception e) {
             Log.d("**ERROR**",": " + e.getMessage());
@@ -165,6 +169,70 @@ public class CardDetailsActivity extends AppCompatActivity {
 
         dbh.queryWineReviews(fs, this, wr);
         //Create a card for each one
+    }
+
+    public void onClickToggleRatings(View vew) {
+
+        final RelativeLayout v = findViewById(R.id.new_wine_entry_ratings_container);
+
+        if(ratingsShowing) {
+
+            ratingsShowing = false;
+            v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            final int targetHeight = v.getMeasuredHeight();
+
+            // Older versions of android (pre API 21) cancel animations for views with a height of 0.
+            v.getLayoutParams().height = 1;
+            v.setVisibility(View.VISIBLE);
+            Animation a = new Animation()
+            {
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    v.getLayoutParams().height = interpolatedTime == 1
+                            ? RelativeLayout.LayoutParams.WRAP_CONTENT
+                            : (int)(targetHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+
+                @Override
+                public boolean willChangeBounds() {
+                    return true;
+                }
+            };
+
+            // 1dp/ms
+            a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+            v.startAnimation(a);
+        }
+        else {
+            ratingsShowing = true;
+
+            final int initialHeight = v.getMeasuredHeight();
+
+            Animation a = new Animation()
+            {
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    if(interpolatedTime == 1){
+                        v.setVisibility(View.GONE);
+                    }else{
+                        v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                        v.requestLayout();
+                    }
+                }
+
+                @Override
+                public boolean willChangeBounds() {
+                    return true;
+                }
+            };
+
+            // 1dp/ms
+            a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+            v.startAnimation(a);
+        }
+
+
     }
 
     //called from the DatabaseHandler

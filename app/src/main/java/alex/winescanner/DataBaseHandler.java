@@ -101,7 +101,7 @@ public class DataBaseHandler {
     }
 
     public void getRatingsForWineReview(FirebaseFirestore db, final Context context, final WineReview wineReview) {
-        Log.d("***DEBUG***", "inside getWineReviews");
+        Log.d("***DEBUG***", "inside getRatingsForWineReviews");
 
         final LibraryActivity LA = (LibraryActivity) context;
 
