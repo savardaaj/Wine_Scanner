@@ -122,16 +122,13 @@ public class NewWineEntryActivity extends AppCompatActivity {
             existingWineReview.description = bcWine.description;
 
             String barCode = "[" + existingWineReview.barcode + "]";
+
             //populate form from barcode data
             txtBarcode.setText(barCode);
             txtWineName.setText(bcWine.title);
             txtWineMaker.setText(bcWine.brand);
             acWineType.setText(bcWine.color);
-            //txtWineYear.setText(existingWineReview.year);
-            //txtWineLocation.setText(existingWineReview.location);
             txtWineDescription.setText(bcWine.description);
-            //wineRating.setRating(existingWineReview.rating);
-            //cbShareReview.setChecked(existingWineReview.shareReview);
 
             //TODO: incorporate later
             //if(existingWineReview.imageBitmap != null) {

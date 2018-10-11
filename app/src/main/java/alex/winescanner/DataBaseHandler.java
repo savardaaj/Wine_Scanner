@@ -76,6 +76,7 @@ public class DataBaseHandler {
         final LibraryActivity LA = (LibraryActivity) context;
 
         final ArrayList<WineReview> wineReviewList = new ArrayList<WineReview>();
+        //Retrieve all wine reviews from this user
         db.collection("WineReviews").whereEqualTo("userUUID", user.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -91,6 +92,36 @@ public class DataBaseHandler {
                             //set local list with list returned
                             LA.setWineReviewArrayList(wineReviewList);
                             LA.loadWineReviews();
+                        } else {
+                            Toast.makeText(context, "Error Occurred retrieving reviews", Toast.LENGTH_SHORT).show();
+                            Log.d("***ERROR***", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+    }
+
+    public void getRatingsForWineReview(FirebaseFirestore db, final Context context, final WineReview wineReview) {
+        Log.d("***DEBUG***", "inside getWineReviews");
+
+        final LibraryActivity LA = (LibraryActivity) context;
+
+        final ArrayList<WineReview> ratingsForWineReview = new ArrayList<WineReview>();
+        //Retrieve all wine reviews from this user
+        db.collection("WineReviews").whereEqualTo("barcode", wineReview.barcode).whereGreaterThan("rating", 0)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d("***DEBUG***", document.getId() + " => " + document.getData());
+                                WineReview wr = document.toObject(WineReview.class);
+                                ratingsForWineReview.add(wr);
+                            }
+                            //set local list with list returned
+                            LA.setRatingsForWineReview(wineReview, ratingsForWineReview);
+                            //LA.loadRatings();
                         } else {
                             Toast.makeText(context, "Error Occurred retrieving reviews", Toast.LENGTH_SHORT).show();
                             Log.d("***ERROR***", "Error getting documents.", task.getException());

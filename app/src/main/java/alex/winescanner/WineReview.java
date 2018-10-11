@@ -25,6 +25,8 @@ public class WineReview {
     public String barcode;
     public boolean shareReview;
     public ArrayList<String> likes;
+    public int avgRating;
+    public int ratingCount;
 
     WineReview() {
         this.id = UUID.randomUUID().toString();
@@ -43,6 +45,8 @@ public class WineReview {
         this.barcode = "";
         this.shareReview = false;
         this.likes = new ArrayList<>();
+        this.avgRating = 0;
+        this.ratingCount = 0;
     }
 
     public String getId() {

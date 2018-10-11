@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.Rating;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -29,11 +30,13 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.Login;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -65,7 +68,7 @@ public class LibraryActivity extends AppCompatActivity
     private static int SINGLE_ENTRY = 4;
 
     private StorageReference storageRef;
-    //TODO: sign out: FirebaseAuth.getInstance().signOut();
+
 
     //storage/emulated/0/WineScanner/Images/337039ea-41ed-4a6d-aa4a-a1b583011539.png
     final static File wineScannerImagesDirectory = new File(Environment.getExternalStorageDirectory().getPath() + "/WineScanner/Images");;
@@ -203,6 +206,11 @@ public class LibraryActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        else if (id == R.id.action_signout) {
+            FirebaseAuth.getInstance().signOut();
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);
@@ -358,7 +366,7 @@ public class LibraryActivity extends AppCompatActivity
 
                 //set values of imported components
                 wineName.setText((wr.name + " - " + wr.maker));
-                //wineRating.setRating(wr.rating);
+
                 wineDesc.setText(wr.description);
 
                 if(wr.shareReview) {
@@ -368,8 +376,10 @@ public class LibraryActivity extends AppCompatActivity
                     shareReview.setVisibility(View.INVISIBLE);
                 }
 
-                //null out unused fields atm
-                wineRatingCount.setText("");
+                wineRating.setRating(0);
+                wineRatingCount.setText("N/A");
+
+                //unimplemented fields
                 winePts.setText("");
                 wineRatingSource.setText("");
 
@@ -379,6 +389,7 @@ public class LibraryActivity extends AppCompatActivity
 
                 //add Wine card to scroll view
                 scrollContainer.addView(wineCard);
+
             }
         }
         catch(Exception e) {
@@ -517,8 +528,50 @@ public class LibraryActivity extends AppCompatActivity
         }
     }
 
+    //Calback from DBH
     public void setWineReviewArrayList(ArrayList<WineReview> list) {
+        Log.d("***Debug***", "inside setWineReviewArrayList");
         wineReviewArrayList = list;
+        for(WineReview wr : wineReviewArrayList) {
+            dbh.getRatingsForWineReview(fs, this, wr);
+        }
+    }
+
+    //Callback from DBH
+    public void setRatingsForWineReview(WineReview wr, ArrayList<WineReview> list) {
+        Log.d("***Debug***", "inside setRatingsForWineReviewArrayList");
+
+        if(list != null) {
+            wr.ratingCount = list.size();
+            int temp = 0;
+            for(WineReview w : list) {
+                temp += w.rating;
+            }
+            wr.avgRating = temp / wr.ratingCount;
+        }
+
+        //redraw the specific review
+        updateWineCardView(wr);
+
+    }
+
+    public void updateWineCardView(WineReview wr) {
+        Log.d("***Debug***", "inside updateWineCardView");
+
+        int index = 0;
+
+        LinearLayout scrollContainer = findViewById(R.id.content_library_container);
+
+        index = wineReviewArrayList.indexOf(wr);
+        View card = scrollContainer.getChildAt(index);
+
+        TextView txtRatingsCount = card.findViewById(R.id.tvRatingsCount);
+        RatingBar rbAvgRating = card.findViewById(R.id.ratingBar);
+
+        String count = "" + wr.ratingCount;
+
+        txtRatingsCount.setText(count);
+        rbAvgRating.setRating(wr.avgRating);
     }
 
     public void saveDocReference(String docRef, WineReview wineReview) {

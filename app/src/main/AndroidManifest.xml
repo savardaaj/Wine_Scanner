@@ -39,8 +39,7 @@
         </activity>
         <activity
             android:name=".CardDetailsActivity"
-            android:label="@string/title_activity_card_details"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:label="@string/title_activity_card_details"/>
 
         <meta-data
             android:name="preloaded_fonts"
