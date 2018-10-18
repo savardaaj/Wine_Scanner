@@ -218,7 +218,7 @@ public class DataBaseHandler {
         final CardDetailsActivity cda = (CardDetailsActivity) context;
 
         if(wr.barcode != null) {
-            db.collection("WineReviews").whereEqualTo("barcode", wr.barcode).whereEqualTo("shareReview", true)
+            db.collection("WineReviews").whereEqualTo("barcode", wr.barcode)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override

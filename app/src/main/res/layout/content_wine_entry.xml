@@ -186,7 +186,7 @@
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="253dp"
         android:layout_height="31dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginEnd="36dp"
         android:background="@color/colorBackground"
         android:editable="false"
         android:ems="10"
@@ -203,7 +203,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtWineDescription"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.073" />
 
     <RatingBar
         android:id="@+id/rb_main_card_details"
@@ -226,139 +226,196 @@
         app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
         app:layout_constraintVertical_bias="0.417" />
 
-    <RelativeLayout
+
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/new_wine_entry_ratings_container"
-        android:layout_width="226dp"
-        android:layout_height="182dp"
+        android:layout_width="239dp"
+        android:layout_height="119dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@color/colorPrimary"
         android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
-        app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
-        app:layout_constraintHorizontal_bias="0.454"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
-        app:layout_constraintTop_toTopOf="@+id/rb_main_card_details"
-        app:layout_constraintVertical_bias="0.251">
+        app:layout_constraintTop_toBottomOf="@+id/rb_main_card_details">
 
-        <RatingBar
-            android:id="@+id/rb_sub5"
-            style="@style/Widget.AppCompat.RatingBar.Indicator"
+        <TextView
+            android:id="@+id/tv_5star"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:numStars="5"
-            android:rating="0"
-            android:stepSize=".5" />
+            android:fontFamily="@font/comfortaa_light"
+            android:text="5 star"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toStartOf="@+id/pb_sub5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <RatingBar
-            android:id="@+id/rb_sub4"
-            style="@style/Widget.AppCompat.RatingBar.Indicator"
+        <TextView
+            android:id="@+id/tv_4star"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rb_sub5"
-            android:numStars="5"
-            android:rating="0"
-            android:stepSize=".5" />
+            android:fontFamily="@font/comfortaa_light"
+            android:text="4 star"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toStartOf="@+id/pb_sub4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub5" />
 
-        <RatingBar
-            android:id="@+id/rb_sub3"
-            style="@style/Widget.AppCompat.RatingBar.Indicator"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tv_3star"
+            android:layout_width="42dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rb_sub4"
-            android:numStars="5"
-            android:rating="0"
-            android:stepSize=".5" />
+            android:fontFamily="@font/comfortaa_light"
+            android:text="3 star"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toStartOf="@+id/pb_sub3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub4" />
 
-        <RatingBar
-            android:id="@+id/rb_sub2"
-            style="@style/Widget.AppCompat.RatingBar.Indicator"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tv_2star"
+            android:layout_width="42dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rb_sub3"
-            android:numStars="5"
-            android:rating="0"
-            android:stepSize=".5" />
+            android:fontFamily="@font/comfortaa_light"
+            android:text="2 star"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toStartOf="@+id/pb_sub2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub3" />
 
-        <RatingBar
-            android:id="@+id/rb_sub1"
-            style="@style/Widget.AppCompat.RatingBar.Indicator"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tv_1star"
+            android:layout_width="42dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rb_sub2"
-            android:layout_marginTop="0dp"
-            android:numStars="5"
-            android:rating="0"
-            android:stepSize=".5" />
+            android:fontFamily="@font/comfortaa_light"
+            android:paddingLeft="2dp"
+            android:text="1 star"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toStartOf="@+id/pb_sub1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub2" />
+
+        <ProgressBar
+            android:id="@+id/pb_sub5"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+            android:layout_width="131dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:progress="0"
+            app:layout_constraintEnd_toStartOf="@+id/tv_sub5"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/pb_sub4"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+            android:layout_width="131dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:progress="0"
+            app:layout_constraintEnd_toStartOf="@+id/tv_sub4"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub5" />
+
+        <ProgressBar
+            android:id="@+id/pb_sub3"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+            android:layout_width="131dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:progress="0"
+            app:layout_constraintEnd_toStartOf="@+id/tv_sub3"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub4" />
+
+        <ProgressBar
+            android:id="@+id/pb_sub2"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+            android:layout_width="131dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:progress="0"
+            app:layout_constraintEnd_toStartOf="@+id/tv_sub2"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub3" />
+
+        <ProgressBar
+            android:id="@+id/pb_sub1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="131dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/tv_sub1"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub2" />
 
         <TextView
             android:id="@+id/tv_sub5"
-            android:layout_width="40dp"
-            android:layout_height="35dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="184dp"
-            android:layout_marginTop="1dp"
+            android:layout_width="34dp"
+            android:layout_height="18dp"
             android:fontFamily="@font/comfortaa_light"
+            android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_sub4"
-            android:layout_width="40dp"
-            android:layout_height="36dp"
-            android:layout_alignBottom="@+id/rb_sub4"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="184dp"
-            android:layout_marginBottom="0dp"
+            android:layout_width="34dp"
+            android:layout_height="18dp"
             android:fontFamily="@font/comfortaa_light"
+            android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub5" />
 
         <TextView
             android:id="@+id/tv_sub3"
-            android:layout_width="40dp"
-            android:layout_height="36dp"
-            android:layout_alignBottom="@+id/rb_sub4"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="184dp"
-            android:layout_marginBottom="-37dp"
+            android:layout_width="34dp"
+            android:layout_height="18dp"
             android:fontFamily="@font/comfortaa_light"
+            android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub4" />
 
         <TextView
             android:id="@+id/tv_sub2"
-            android:layout_width="40dp"
-            android:layout_height="35dp"
-            android:layout_alignBottom="@+id/rb_sub4"
-            android:layout_alignParentStart="false"
-            android:layout_marginStart="184dp"
-            android:layout_marginBottom="-72dp"
+            android:layout_width="34dp"
+            android:layout_height="18dp"
             android:fontFamily="@font/comfortaa_light"
+            android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub3" />
 
         <TextView
             android:id="@+id/tv_sub1"
-            android:layout_width="40dp"
-            android:layout_height="35dp"
-            android:layout_alignBottom="@+id/rb_sub4"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="184dp"
-            android:layout_marginBottom="-107dp"
+            android:layout_width="34dp"
+            android:layout_height="18dp"
             android:fontFamily="@font/comfortaa_light"
+            android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="12sp" />
-    </RelativeLayout>
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pb_sub2" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <EditText
         android:id="@+id/txtWineDescription"
         android:layout_width="352dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="128dp"
         android:background="@color/colorBackground"
         android:editable="false"
         android:ems="10"
@@ -371,10 +428,9 @@
         android:textColorHint="@color/colorGreenButton"
         app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
-        app:layout_constraintHorizontal_bias="0.511"
+        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
-        app:layout_constraintTop_toBottomOf="@+id/new_wine_entry_ratings_container"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/new_wine_entry_ratings_container" />
 
     <CheckBox
         android:id="@+id/cb_carddetails_isshared"
@@ -396,7 +452,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtWineDescription"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.064" />
 
     <ImageView
         android:id="@+id/imageView2"

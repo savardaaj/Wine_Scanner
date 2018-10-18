@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -171,27 +172,115 @@ public class CardDetailsActivity extends AppCompatActivity {
         //Create a card for each one
     }
 
-    public void onClickToggleRatings(View vew) {
+    public void populateRatingsBreakdown() {
+        Log.d("***Debug***", "inside populateRatingsBreakdown");
+        ConstraintLayout dropdownContainer = findViewById(R.id.new_wine_entry_ratings_container);
 
-        final RelativeLayout v = findViewById(R.id.new_wine_entry_ratings_container);
+        ProgressBar pbSub5 = dropdownContainer.findViewById(R.id.pb_sub5);
+        ProgressBar pbSub4 = dropdownContainer.findViewById(R.id.pb_sub4);
+        ProgressBar pbSub3 = dropdownContainer.findViewById(R.id.pb_sub3);
+        ProgressBar pbSub2 = dropdownContainer.findViewById(R.id.pb_sub2);
+        ProgressBar pbSub1 = dropdownContainer.findViewById(R.id.pb_sub1);
+
+        TextView tvSub5 = dropdownContainer.findViewById(R.id.tv_sub5);
+        TextView tvSub4 = dropdownContainer.findViewById(R.id.tv_sub4);
+        TextView tvSub3 = dropdownContainer.findViewById(R.id.tv_sub3);
+        TextView tvSub2 = dropdownContainer.findViewById(R.id.tv_sub2);
+        TextView tvSub1 = dropdownContainer.findViewById(R.id.tv_sub1);
+
+        float fiveStarPercent = 0;
+        float fourStarPercent = 0;
+        float threeStarPercent = 0;
+        float twoStarPercent = 0;
+        float oneStarPercent = 0;
+
+        float count5 = 0;
+        float count4 = 0;
+        float count3 = 0;
+        float count2 = 0;
+        float count1 = 0;
+
+        float totalReviews = commentsArrayList.size();
+
+        for(WineReview comment : commentsArrayList) {
+            if(comment.rating == 5) {
+                count5++;
+            }
+            else if(comment.rating == 4) {
+                count4++;
+            }
+            else if(comment.rating == 3) {
+                count3++;
+            }
+            else if(comment.rating == 2) {
+                count2++;
+            }
+            else if(comment.rating == 1) {
+                count1++;
+            }
+        }
+
+        Log.d("***DEBUG***", "Counts" + count2);
+
+        if(count5 != 0) {
+            fiveStarPercent = (1 / (totalReviews / count5)) * 100;
+            pbSub5.setProgress((int)fiveStarPercent);
+        }
+        if(count4 != 0) {
+            fourStarPercent = (1 / (totalReviews / count4)) * 100;
+            pbSub4.setProgress((int)fourStarPercent);
+        }
+        if(count3 != 0) {
+            threeStarPercent = (1 / (totalReviews / count3)) * 100;
+            pbSub3.setProgress((int)threeStarPercent);
+        }
+        if(count2 != 0) {
+            twoStarPercent = (1 / (totalReviews / count2)) * 100;
+            pbSub2.setProgress((int)twoStarPercent);
+        }
+        if(count1 != 0) {
+            oneStarPercent = (1 / (totalReviews / count1)) * 100;
+            pbSub1.setProgress((int)oneStarPercent);
+        }
+
+
+        String c5 = fiveStarPercent + "%";
+        String c4 = fourStarPercent + "%";
+        String c3 = threeStarPercent + "%";
+        String c2 = twoStarPercent + "%";
+        String c1 = oneStarPercent + "%";
+
+        tvSub5.setText(c5);
+        tvSub4.setText(c4);
+        tvSub3.setText(c3);
+        tvSub2.setText(c2);
+        tvSub1.setText(c1);
+    }
+
+    public void onClickToggleRatings(View vew) {
+        Log.d("***Debug***", "inside onClickToggleRatings");
+
+        final ConstraintLayout ratingsContainer = findViewById(R.id.new_wine_entry_ratings_container);
+        //txtWineDescription
+
 
         if(ratingsShowing) {
 
             ratingsShowing = false;
-            v.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-            final int targetHeight = v.getMeasuredHeight();
+            ratingsContainer.measure(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            final int targetHeight = ratingsContainer.getMeasuredHeight();
 
             // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-            v.getLayoutParams().height = 1;
-            v.setVisibility(View.VISIBLE);
+            ratingsContainer.getLayoutParams().height = 1;
+            ratingsContainer.setVisibility(View.VISIBLE);
             Animation a = new Animation()
             {
                 @Override
                 protected void applyTransformation(float interpolatedTime, Transformation t) {
-                    v.getLayoutParams().height = interpolatedTime == 1
+                    ratingsContainer.getLayoutParams().height = interpolatedTime == 1
                             ? RelativeLayout.LayoutParams.WRAP_CONTENT
                             : (int)(targetHeight * interpolatedTime);
-                    v.requestLayout();
+                    ratingsContainer.requestLayout();
                 }
 
                 @Override
@@ -201,23 +290,24 @@ public class CardDetailsActivity extends AppCompatActivity {
             };
 
             // 1dp/ms
-            a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-            v.startAnimation(a);
+            a.setDuration((int)(targetHeight / ratingsContainer.getContext().getResources().getDisplayMetrics().density));
+            ratingsContainer.startAnimation(a);
         }
         else {
+
             ratingsShowing = true;
 
-            final int initialHeight = v.getMeasuredHeight();
+            final int initialHeight = ratingsContainer.getMeasuredHeight();
 
             Animation a = new Animation()
             {
                 @Override
                 protected void applyTransformation(float interpolatedTime, Transformation t) {
                     if(interpolatedTime == 1){
-                        v.setVisibility(View.GONE);
+                        ratingsContainer.setVisibility(View.GONE);
                     }else{
-                        v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
-                        v.requestLayout();
+                        ratingsContainer.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
+                        ratingsContainer.requestLayout();
                     }
                 }
 
@@ -228,11 +318,9 @@ public class CardDetailsActivity extends AppCompatActivity {
             };
 
             // 1dp/ms
-            a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-            v.startAnimation(a);
+            a.setDuration((int)(initialHeight / ratingsContainer.getContext().getResources().getDisplayMetrics().density));
+            ratingsContainer.startAnimation(a);
         }
-
-
     }
 
     //called from the DatabaseHandler
@@ -246,45 +334,47 @@ public class CardDetailsActivity extends AppCompatActivity {
         //Create a card for each one
         for(WineReview comment : commentsArrayList) {
             if(!user.getUid().equals(comment.userUUID)) {
-                //setup layout stuff
-                View commentCard = inflater.inflate(R.layout.content_comment, null, false);
-                commentCard.setPadding(0,0,0, 10);
-                commentCard.setTag(comment);
+                if(comment.shareReview) {
+                    //setup layout stuff
+                    View commentCard = inflater.inflate(R.layout.content_comment, null, false);
+                    commentCard.setPadding(0,0,0, 10);
+                    commentCard.setTag(comment);
 
-                //initialize the layout fields
-                TextView txtProfileName = commentCard.findViewById(R.id.tv_profile_name);
-                //ImageView ivProfilePicture = commentCard.findViewById(R.id.iv_profile);
-                ImageView ivLike = commentCard.findViewById(R.id.iv_like);
-                ImageView ivLikeInactive = commentCard.findViewById(R.id.iv_like_inactive);
-                TextView tvLikeCount = commentCard.findViewById(R.id.tv_like_count);
-                RatingBar rbRating = commentCard.findViewById(R.id.rb_comment);
-                TextView txtDescription = commentCard.findViewById(R.id.tv_comment_description);
+                    //initialize the layout fields
+                    TextView txtProfileName = commentCard.findViewById(R.id.tv_profile_name);
+                    //ImageView ivProfilePicture = commentCard.findViewById(R.id.iv_profile);
+                    ImageView ivLike = commentCard.findViewById(R.id.iv_like);
+                    ImageView ivLikeInactive = commentCard.findViewById(R.id.iv_like_inactive);
+                    TextView tvLikeCount = commentCard.findViewById(R.id.tv_like_count);
+                    RatingBar rbRating = commentCard.findViewById(R.id.rb_comment);
+                    TextView txtDescription = commentCard.findViewById(R.id.tv_comment_description);
 
-                txtProfileName.setText(user.getDisplayName());
-                //ivProfilePicture.setImageDrawable(user.profile_picture);
+                    txtProfileName.setText(user.getDisplayName());
+                    //ivProfilePicture.setImageDrawable(user.profile_picture);
 
-                tvLikeCount.setText(comment.getLikesSize());
-                rbRating.setRating(comment.rating);
-                txtDescription.setText(comment.description);
+                    tvLikeCount.setText(comment.getLikesSize());
+                    rbRating.setRating(comment.rating);
+                    txtDescription.setText(comment.description);
 
-                if(comment.likes.contains(user.getUid())) {
-                    ivLike.setVisibility(View.VISIBLE);
-                    ivLikeInactive.setVisibility(View.INVISIBLE);
+                    if(comment.likes.contains(user.getUid())) {
+                        ivLike.setVisibility(View.VISIBLE);
+                        ivLikeInactive.setVisibility(View.INVISIBLE);
+                    }
+                    else {
+                        ivLike.setVisibility(View.INVISIBLE);
+                        ivLikeInactive.setVisibility(View.VISIBLE);
+                    }
+
+
+                    scrollContainer.addView(commentCard);
                 }
-                else {
-                    ivLike.setVisibility(View.INVISIBLE);
-                    ivLikeInactive.setVisibility(View.VISIBLE);
-                }
-
-
-                scrollContainer.addView(commentCard);
             }
-
         }
     }
 
     public void setCommentsArrayList(ArrayList<WineReview> list) {
         commentsArrayList = list;
+        populateRatingsBreakdown();
     }
 
     public void onClickLikeComment(View v) {
