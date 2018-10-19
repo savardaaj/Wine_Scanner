@@ -139,18 +139,24 @@ public class LibraryActivity extends AppCompatActivity
                     wineReviewJSON = data.getStringExtra("wineReviewJSON");
                     if (wineReviewJSON != null) {
                         WineReview wineReview = new Gson().fromJson(wineReviewJSON, WineReview.class);
+                        Log.d("***DEBUG***", "outside for");
                         for (WineReview wr : wineReviewArrayList) {
+                            Log.d("***DEBUG***", "inside for");
                             if (wr.id.equals(wineReview.id)) {
                                 wineReviewArrayList.set(wineReviewArrayList.indexOf(wr), wineReview);
                                 if (wineReview.pictureFilePath != null) {
                                     //keep receiving task is not yet complete
                                     //uploadFile(wineReview);
                                 }
-                                dbh.updateWineReview(fs, this, wineReview);
-                                dbh.getWineReviews(fs, this, user);
+
                                 break;
                             }
                         }
+                        dbh.updateWineReview(fs, this, wineReview);
+                        dbh.getWineReviews(fs, this, user);
+                    }
+                    else {
+                        Log.d("***DEBUG***", "WineReview JSON NULL");
                     }
                 }
                 else if(requestCode == COMPARE) {
@@ -174,7 +180,13 @@ public class LibraryActivity extends AppCompatActivity
                 }
             }
         }
-        loadWineReviews();
+        else {
+            //result code not OK
+            Log.d("***Debug***", "Result code not OK");
+
+        }
+        //reload the wines
+        dbh.getWineReviews(fs, this, user);
     }
 
     @Override

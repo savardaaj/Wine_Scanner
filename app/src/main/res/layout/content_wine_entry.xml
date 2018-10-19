@@ -10,7 +10,7 @@
     <View
         android:id="@+id/new_wine_entry_container"
         android:layout_width="413dp"
-        android:layout_height="582dp"
+        android:layout_height="540dp"
         android:background="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -36,31 +36,24 @@
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGreenButton"
         android:textSize="10sp"
-        app:layout_constraintBottom_toTopOf="@+id/txtWineDescription"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_wine_picture"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_wine_picture" />
 
     <ImageView
         android:id="@+id/iv_wine_picture"
         android:layout_width="173dp"
         android:layout_height="195dp"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
-        app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
         app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_wine" />
 
     <EditText
         android:id="@+id/txtWineName"
         style="@style/Widget.AppCompat.EditText"
-        android:layout_width="181dp"
-        android:layout_height="25dp"
+        android:layout_width="231dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:background="@color/colorBackground"
         android:editable="false"
         android:ems="10"
@@ -73,19 +66,18 @@
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGreenButton"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
-        app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="0.04000002" />
+        app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container" />
 
     <EditText
         android:id="@+id/txtWineMaker"
         style="@style/Widget.AppCompat.EditText"
-        android:layout_width="181dp"
-        android:layout_height="25dp"
+        android:layout_width="231dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:background="@color/colorBackground"
         android:editable="false"
         android:ems="10"
@@ -98,19 +90,18 @@
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGreenButton"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
-        app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="0.110000014" />
+        app:layout_constraintTop_toBottomOf="@+id/txtWineName" />
 
     <EditText
         android:id="@+id/txtWineType"
         style="@style/Widget.AppCompat.EditText"
-        android:layout_width="181dp"
-        android:layout_height="25dp"
+        android:layout_width="231dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:background="@color/colorBackground"
         android:editable="false"
         android:ems="10"
@@ -123,20 +114,18 @@
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGreenButton"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
-        app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="0.18" />
+        app:layout_constraintTop_toBottomOf="@+id/txtWineMaker" />
 
     <EditText
         android:id="@+id/txtWineYear"
         style="@style/Widget.AppCompat.EditText"
-        android:layout_width="181dp"
-        android:layout_height="25dp"
+        android:layout_width="231dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         android:background="@color/colorBackground"
         android:editable="false"
         android:ems="10"
@@ -149,20 +138,19 @@
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGreenButton"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
-        app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="0.24000001" />
+        app:layout_constraintTop_toBottomOf="@+id/txtWineType" />
 
     <EditText
         android:id="@+id/txtWineLocation"
         style="@style/Widget.AppCompat.EditText"
-        android:layout_width="181dp"
-        android:layout_height="25dp"
+        android:layout_width="231dp"
+        android:layout_height="29dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="20dp"
         android:background="@color/colorBackground"
         android:editable="false"
         android:ems="10"
@@ -175,18 +163,21 @@
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGreenButton"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
+        app:layout_constraintBottom_toTopOf="@+id/rb_main_card_details"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
-        app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="0.31" />
+        app:layout_constraintTop_toBottomOf="@+id/txtWineYear"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/txt_like_description"
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="253dp"
         android:layout_height="31dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="36dp"
+        android:layout_marginBottom="24dp"
         android:background="@color/colorBackground"
         android:editable="false"
         android:ems="10"
@@ -203,40 +194,37 @@
         app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtWineDescription"
-        app:layout_constraintVertical_bias="0.073" />
+        app:layout_constraintVertical_bias="0.006" />
 
     <RatingBar
         android:id="@+id/rb_main_card_details"
         android:layout_width="241dp"
-        android:layout_height="44dp"
+        android:layout_height="48dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         android:clickable="false"
         android:focusable="false"
         android:isIndicator="true"
         android:numStars="5"
         android:rating="0"
         android:stepSize=".5"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
-        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintHorizontal_bias="0.416"
         app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
-        app:layout_constraintTop_toTopOf="@+id/new_wine_entry_container"
-        app:layout_constraintVertical_bias="0.417" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_barcode" />
 
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/new_wine_entry_ratings_container"
         android:layout_width="239dp"
-        android:layout_height="119dp"
+        android:layout_height="116dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@color/colorPrimary"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
         app:layout_constraintTop_toBottomOf="@+id/rb_main_card_details">
@@ -413,9 +401,8 @@
         android:layout_width="352dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="128dp"
         android:background="@color/colorBackground"
         android:editable="false"
         android:ems="10"
@@ -426,7 +413,6 @@
         android:inputType="textMultiLine"
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGreenButton"
-        app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintEnd_toEndOf="@+id/new_wine_entry_container"
         app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="@+id/new_wine_entry_container"
@@ -437,6 +423,8 @@
         android:layout_width="92dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="24dp"
         android:buttonTint="@color/colorGreenButton"
         android:clickable="false"
         android:contextClickable="false"
@@ -452,12 +440,12 @@
         app:layout_constraintBottom_toBottomOf="@+id/new_wine_entry_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtWineDescription"
-        app:layout_constraintVertical_bias="0.064" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="22dp"
-        android:layout_height="13dp"
+        android:layout_width="28dp"
+        android:layout_height="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:onClick="onClickToggleRatings"
