@@ -119,7 +119,7 @@ public class BarcodeScanner extends AppCompatActivity {
      * @param intent
      */
     public void onActivityResult(int rc, int resultCode, Intent intent) {
-        Log.d("***DEBUG***", "inside onActivityResult");
+        Log.d("***DEBUG***", "inside BarcodeScanner: onActivityResult");
         try {
             //retrieve scan result
             IntentResult scanningResult = IntentIntegrator.parseActivityResult(rc, resultCode, intent);
@@ -129,56 +129,54 @@ public class BarcodeScanner extends AppCompatActivity {
                 String scanContent = scanningResult.getContents();
                 String scanFormat = scanningResult.getFormatName();
 
-                Log.d("ScanContent: ", scanContent);
-                Log.d("ScanFormat: ", scanFormat);
+                Log.d("***DEBUG***", "ScanContent: " + scanContent);
+                Log.d("***DEBUG***", "ScanFormat: " + scanFormat);
 
                 //Scan content is barcode number
-                if(!scanContent.equals("")) {
-                    scanDataHandler.sendRequest(scanContent);
+                if(scanContent != null) {
+                    if (!scanContent.equals("")) {
+                        scanDataHandler.sendRequest(scanContent);
 
-                    barcodeWine = scanDataHandler.getBarcodeWine();
-                    if(requestCode == SINGLE_ENTRY) {
-                        //return user to new wine entry screen, notify that no wine found
-                        Intent i = new Intent(this, LibraryActivity.class);
+                        barcodeWine = scanDataHandler.getBarcodeWine();
+                        if (requestCode == SINGLE_ENTRY) {
+                            //return user to new wine entry screen, notify that no wine found
+                            Intent i = new Intent(this, LibraryActivity.class);
 
-                        if(barcodeWine.title.equals("") || barcodeWine.title == null) {
-                            barcodeWine = new BarcodeWine();
+                            if (barcodeWine.title.equals("") || barcodeWine.title == null) {
+                                barcodeWine = new BarcodeWine();
 
-                            barcodeWine.upc = scanContent;
-                            i.putExtra("barcodeWine", barcodeWine);
-                            Log.d("***Debug***", "bcWine" + barcodeWine.upc);
+                                //scan found nothing
+                                barcodeWine.upc = scanContent;
+                                i.putExtra("barcodeWine", barcodeWine);
+                            } else {
+                                i.putExtra("barcodeWine", barcodeWine);
+                            }
+
+                            setResult(RESULT_OK, i);
+                            super.finish();
+                        } else if (requestCode == COMPARE) {
+                            if (barcodeWine.upc != null) {
+                                barcodeWineList.add(barcodeWine);
+                                wineCount++;
+                            } else if (barcodeWine.upc == null) {
+                                //Scan didn't find data for this wine.
+                                barcodeWineList.add(barcodeWine);
+                                wineCount++;
+                            }
+                        } else if (requestCode == UPDATE_BARCODE) {
+                            String strBarcode = scanContent;
+                            Intent i = new Intent(this, NewWineEntryActivity.class);
+                            i.putExtra("barcode", strBarcode);
+                            setResult(RESULT_OK, i);
+                            super.finish();
                         }
-                        else {
-                            Log.d("***Debug***", "bcWine set");
-                            i.putExtra("barcodeWine", barcodeWine);
-                        }
-
-                        setResult(RESULT_OK, i);
-                        super.finish();
                     }
-                    else if(requestCode == COMPARE) {
-                        if(barcodeWine.upc != null) {
-                            barcodeWineList.add(barcodeWine);
-                            wineCount++;
-                        }
-                        else if(barcodeWine.upc == null) {
-                            //Scan didn't find data for this wine.
-                            barcodeWineList.add(barcodeWine);
-                            wineCount++;
-                        }
-                    }
-                    else if(requestCode == UPDATE_BARCODE) {
-                        String strBarcode = scanContent;
-                        Intent i = new Intent(this, NewWineEntryActivity.class);
-                        i.putExtra("barcode", strBarcode);
-                        setResult(RESULT_OK, i);
-                        super.finish();
-                    }
-
                 }
                 else {
                     Toast.makeText(getApplicationContext(),"No scan data received one!", Toast.LENGTH_SHORT).show();
-                    Log.d("***DEBUG***", "Scan content was blank");
+                    Log.d("***DEBUG***", "Scan content was null");
+                    setResult(RESULT_CANCELED);
+                    super.finish();
                 }
             }
             else {
@@ -187,6 +185,8 @@ public class BarcodeScanner extends AppCompatActivity {
         }
         catch(Exception e) {
 
+            Log.d("***DEBUG***", "Exception Occurred");
+            Log.d("***DEBUG***", e.getMessage());
         }
 
     }

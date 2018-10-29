@@ -238,7 +238,33 @@ public class DataBaseHandler {
                         }
                     });
         }
+    }
 
+    public void searchReviewsByBarcode(FirebaseFirestore db, final Context context, String barcode) {
+        Log.d("***Debug***", "inside searchReviewsByBarcode");
+
+        final NewWineEntryActivity nwa = (NewWineEntryActivity) context;
+
+        if(barcode != null) {
+            db.collection("WineReviews").whereEqualTo("barcode", barcode)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                ArrayList<WineReview> reviewArrayList = new ArrayList<WineReview>();
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d("***DEBUG***", document.getId() + " => " + document.getData());
+                                    WineReview wr = document.toObject(WineReview.class);
+                                    reviewArrayList.add(wr);
+                                }
+                                nwa.populateFromUserReview(reviewArrayList);
+                            } else {
+                                Log.d("***ERROR***", "Error getting documents.", task.getException());
+                            }
+                        }
+                    });
+        }
     }
 
     public void deleteWineReview(FirebaseFirestore db, final Context context, final WineReview wineReview) {

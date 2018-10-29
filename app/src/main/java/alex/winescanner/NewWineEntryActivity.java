@@ -3,8 +3,11 @@ package alex.winescanner;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,9 +20,11 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class NewWineEntryActivity extends AppCompatActivity {
 
@@ -35,9 +40,12 @@ public class NewWineEntryActivity extends AppCompatActivity {
     private int NEW_WR_IMAGE = 2;
     private int UPDATE_BARCODE = 5;
 
+    DataBaseHandler dbh;
+
     WineReview existingWineReview = new WineReview();
     WineReview newWineReview;
     BarcodeWine bcWine;
+    FirebaseFirestore fs;
 
     ConstraintLayout cl;
     EditText txtWineName;
@@ -64,7 +72,6 @@ public class NewWineEntryActivity extends AppCompatActivity {
         AutoCompleteTextView textView = findViewById(R.id.ac_type);
         textView.setAdapter(adapter);
 
-
         newWineReview = new WineReview();
 
         cl = findViewById(R.id.new_wine_entry);
@@ -84,14 +91,23 @@ public class NewWineEntryActivity extends AppCompatActivity {
 
         txtWineName.clearFocus();
 
+        dbh = new DataBaseHandler();
+        fs = FirebaseFirestore.getInstance();
+
         Intent data = getIntent();
         Bundle bundle = data.getExtras();
         if(bundle != null) {
             bcWine = (BarcodeWine) bundle.getSerializable("barcodeWine");
             String JSON  = bundle.getString("edit");
             if(bcWine != null) {
-                isNewEntry = true;
-                populateFromBarcodeScan(bcWine);
+                if(!bcWine.title.equals("")) {
+                    isNewEntry = true;
+                    populateFromBarcodeScan(bcWine);
+                }
+                else {
+                    searchAppDatabase(bcWine.upc);
+                }
+
             }
             else if(JSON != null) {
                 isNewEntry = false;
@@ -107,14 +123,6 @@ public class NewWineEntryActivity extends AppCompatActivity {
         Log.d("***DEBUG***", "Inside populateFromBarcodeScan");
 
         try {
-            if(bcWine.title == null || bcWine.title.equals("")) {
-                AlertDialogBuilder adb = new AlertDialogBuilder();
-                adb.createNewAlertDialog(this, "No Results",
-                        "The barcode you scanned was not found in the database. " +
-                                 "Please enter the data manually");
-
-            }
-
             existingWineReview.barcode = bcWine.upc;
             existingWineReview.name = bcWine.title;
             existingWineReview.maker = bcWine.brand;
@@ -182,6 +190,54 @@ public class NewWineEntryActivity extends AppCompatActivity {
             finish();
         }
 
+    }
+
+    public void populateFromUserReview(ArrayList<WineReview> reviewList) {
+        Log.d("***DEBUG***", "inside populateFromuserReview");
+
+        if(reviewList != null) {
+            if(reviewList.size() > 0) {
+                WineReview userReview = reviewList.get(0);
+
+                AlertDialogBuilder alertDialogBuilder = new AlertDialogBuilder();
+                alertDialogBuilder.createNewAlertDialog(this, "DataFound", "We were able to find a user review that matched this barcode. Modify the data as you please.");
+
+                try {
+                    String barcode = "[" + userReview.barcode + "]";
+
+                    //populate form from existing data
+                    txtWineName.setText(userReview.name);
+                    txtWineMaker.setText(userReview.maker);
+                    acWineType.setText(userReview.type);
+                    txtWineYear.setText(userReview.year);
+                    txtWineLocation.setText(userReview.location);
+                    txtWineDescription.setText("");
+                    txtBarcode.setText(barcode);
+                    wineRating.setRating(userReview.rating);
+                    cbShareReview.setChecked(false);
+
+                    if(userReview.imageBitmap != null) {
+                        ivWinePicture.setImageBitmap(userReview.imageBitmap);
+                        ivPlaceholderAdd.setVisibility(View.INVISIBLE);
+                    }
+
+                }
+                catch(Exception e) {
+                    Log.d("**ERROR**",": " + e.getMessage());
+                    Log.d("**ERROR**",": " + e.getStackTrace());
+                    Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
+
+                    //return to menu_library
+                    Intent intent = new Intent(this, LibraryActivity.class);
+                    setResult(RESULT_CANCELED, intent);
+                    finish();
+                }
+            }
+            else {
+                //no existing reviews found for barcode
+
+            }
+        }
     }
 
     public void onClickSaveWineReview(View v) {
@@ -330,5 +386,8 @@ public class NewWineEntryActivity extends AppCompatActivity {
         }
     }
 
+    public void searchAppDatabase(String barcode) {
+        dbh.searchReviewsByBarcode(fs, this, barcode);
+    }
 
 }

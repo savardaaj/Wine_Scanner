@@ -93,16 +93,16 @@ public class LibraryActivity extends AppCompatActivity
 
         wineReviewArrayList = new ArrayList<>();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -144,6 +144,8 @@ public class LibraryActivity extends AppCompatActivity
                             Log.d("***DEBUG***", "inside for");
                             if (wr.id.equals(wineReview.id)) {
                                 wineReviewArrayList.set(wineReviewArrayList.indexOf(wr), wineReview);
+                                dbh.updateWineReview(fs, this, wineReview);
+                                dbh.getWineReviews(fs, this, user);
                                 if (wineReview.pictureFilePath != null) {
                                     //keep receiving task is not yet complete
                                     //uploadFile(wineReview);
@@ -152,8 +154,7 @@ public class LibraryActivity extends AppCompatActivity
                                 break;
                             }
                         }
-                        dbh.updateWineReview(fs, this, wineReview);
-                        dbh.getWineReviews(fs, this, user);
+
                     }
                     else {
                         Log.d("***DEBUG***", "WineReview JSON NULL");
@@ -387,10 +388,11 @@ public class LibraryActivity extends AppCompatActivity
                     shareReview.setVisibility(View.INVISIBLE);
                 }
 
+                //placeholders until set later by a callback,
                 wineRating.setRating(0);
                 wineRatingCount.setText("N/A");
 
-                //unimplemented fields
+                //unimplemented fields, sources would be web based
                 winePts.setText("");
                 wineRatingSource.setText("");
 
@@ -575,15 +577,21 @@ public class LibraryActivity extends AppCompatActivity
         LinearLayout scrollContainer = findViewById(R.id.content_library_container);
 
         index = wineReviewArrayList.indexOf(wr);
-        View card = scrollContainer.getChildAt(index);
 
-        TextView txtRatingsCount = card.findViewById(R.id.tvRatingsCount);
-        RatingBar rbAvgRating = card.findViewById(R.id.ratingBar);
+        if(index >= 0) {
+            View card = scrollContainer.getChildAt(index);
 
-        String count = "" + wr.ratingCount;
+            TextView txtRatingsCount = card.findViewById(R.id.tvRatingsCount);
+            RatingBar rbAvgRating = card.findViewById(R.id.ratingBar);
 
-        txtRatingsCount.setText(count);
-        rbAvgRating.setRating(wr.avgRating);
+            String count = "" + wr.ratingCount;
+
+            txtRatingsCount.setText(count);
+            rbAvgRating.setRating(wr.avgRating);
+        }
+        else {
+            Log.d("***DEBUG***", "Wine Object Not Found");
+        }
     }
 
     public void saveDocReference(String docRef, WineReview wineReview) {
