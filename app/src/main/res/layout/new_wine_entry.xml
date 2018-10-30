@@ -3,12 +3,14 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sv_wine_entry_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/ll_wine_entry_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -16,7 +18,7 @@
         <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/new_wine_entry"
+            android:id="@+id/cl_new_wine_entry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
@@ -31,8 +33,8 @@
                 android:elevation="10dp"
                 android:onClick="onClickAddWineImage"
                 android:src="@drawable/ic_wine"
-                app:layout_constraintStart_toStartOf="@+id/new_wine_entry"
-                app:layout_constraintTop_toTopOf="@+id/new_wine_entry" />
+                app:layout_constraintStart_toStartOf="@+id/cl_new_wine_entry"
+                app:layout_constraintTop_toTopOf="@+id/cl_new_wine_entry" />
 
             <ImageView
                 android:id="@+id/iv_placeholder_add"
@@ -63,10 +65,10 @@
                 android:textColor="@android:color/white"
                 android:textColorHint="@color/colorGreenButton"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="@+id/new_wine_entry"
+                app:layout_constraintEnd_toEndOf="@+id/cl_new_wine_entry"
                 app:layout_constraintHorizontal_bias="0.51"
                 app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
-                app:layout_constraintTop_toTopOf="@+id/new_wine_entry" />
+                app:layout_constraintTop_toTopOf="@+id/cl_new_wine_entry" />
 
             <EditText
                 android:id="@+id/txtWineMaker"
@@ -101,7 +103,7 @@
                 android:textColor="@android:color/white"
                 android:textColorHint="@color/colorGreenButton"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="@+id/new_wine_entry"
+                app:layout_constraintEnd_toEndOf="@+id/cl_new_wine_entry"
                 app:layout_constraintHorizontal_bias="0.636"
                 app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
                 app:layout_constraintTop_toBottomOf="@+id/txtWineMaker" />
@@ -122,7 +124,7 @@
                 android:textColor="@android:color/white"
                 android:textColorHint="@color/colorGreenButton"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="@+id/new_wine_entry"
+                app:layout_constraintEnd_toEndOf="@+id/cl_new_wine_entry"
                 app:layout_constraintHorizontal_bias="0.489"
                 app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
                 app:layout_constraintTop_toBottomOf="@+id/txtWineLocation" />
@@ -143,7 +145,7 @@
                 android:textColor="@android:color/white"
                 android:textColorHint="@color/colorGreenButton"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="@+id/new_wine_entry"
+                app:layout_constraintEnd_toEndOf="@+id/cl_new_wine_entry"
                 app:layout_constraintStart_toEndOf="@+id/iv_wine_picture"
                 app:layout_constraintTop_toBottomOf="@+id/ac_type" />
 
@@ -180,8 +182,8 @@
                 android:numStars="5"
                 android:rating="0"
                 android:stepSize=".5"
-                app:layout_constraintEnd_toEndOf="@+id/new_wine_entry"
-                app:layout_constraintStart_toStartOf="@+id/new_wine_entry"
+                app:layout_constraintEnd_toEndOf="@+id/cl_new_wine_entry"
+                app:layout_constraintStart_toStartOf="@+id/cl_new_wine_entry"
                 app:layout_constraintTop_toBottomOf="@+id/txt_barcode" />
 
             <EditText
@@ -197,9 +199,9 @@
                 android:inputType="textMultiLine"
                 android:textColor="@android:color/white"
                 android:textColorHint="@color/colorGreenButton"
-                app:layout_constraintEnd_toEndOf="@+id/new_wine_entry"
+                app:layout_constraintEnd_toEndOf="@+id/cl_new_wine_entry"
                 app:layout_constraintHorizontal_bias="0.489"
-                app:layout_constraintStart_toStartOf="@+id/new_wine_entry"
+                app:layout_constraintStart_toStartOf="@+id/cl_new_wine_entry"
                 app:layout_constraintTop_toBottomOf="@+id/ratingBar2" />
 
             <CheckBox
@@ -380,7 +382,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="2dp"
                     android:fontFamily="@font/comfortaa_light"
                     android:text="Add"
                     android:textColor="@android:color/white" />

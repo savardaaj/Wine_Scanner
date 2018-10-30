@@ -291,4 +291,28 @@ public class DataBaseHandler {
                 });
     }
 
+    public void getCharacteristics(FirebaseFirestore db, final Context context) {
+        Log.d("***Debug***", "inside getCharacteristics");
+
+        final NewWineEntryActivity nwa = (NewWineEntryActivity) context;
+            db.collection("Characteristics")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                ArrayList<String> charsArrayList = new ArrayList<>();
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d("***DEBUG***", document.getId() + " => " + document.getData());
+                                    String characteristic = document.getString("name");
+                                    charsArrayList.add(characteristic);
+                                }
+                                nwa.setCharacteristicsArrayList(charsArrayList);
+                            } else {
+                                Log.d("***ERROR***", "Error getting documents.", task.getException());
+                            }
+                        }
+                    });
+    }
+
 }

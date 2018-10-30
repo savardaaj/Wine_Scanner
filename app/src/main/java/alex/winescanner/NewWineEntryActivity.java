@@ -1,23 +1,29 @@
 package alex.winescanner;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -33,6 +39,8 @@ public class NewWineEntryActivity extends AppCompatActivity {
             "Moscato", "Syrah", "Pinot Grigio", "Pinot Noir", "Riesling",
             "Sangiovese", "Sauvignon Blanc", "Zinfandel",
     };
+
+    ArrayList<String> characteristicsArrayList;
 
 
     boolean isNewEntry = false;
@@ -74,7 +82,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
 
         newWineReview = new WineReview();
 
-        cl = findViewById(R.id.new_wine_entry);
+        cl = findViewById(R.id.cl_new_wine_entry);
         txtWineName = cl.findViewById(R.id.txtWineName);
         txtWineMaker = cl.findViewById(R.id.txtWineMaker);
         acWineType = cl.findViewById(R.id.ac_type);
@@ -93,6 +101,8 @@ public class NewWineEntryActivity extends AppCompatActivity {
 
         dbh = new DataBaseHandler();
         fs = FirebaseFirestore.getInstance();
+
+        dbh.getCharacteristics(fs, this);
 
         Intent data = getIntent();
         Bundle bundle = data.getExtras();
@@ -315,6 +325,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
     }
 
     public void onClickHelp(View v) {
+        Log.d("**DEBUG***", "Inside onClickHelp");
         String message = "This will allow your review to show up to other people for this specific barcodeWine";
         String title = "Help";
 
@@ -327,15 +338,55 @@ public class NewWineEntryActivity extends AppCompatActivity {
     }
 
     public void onClickAddWineImage(View v) {
+        Log.d("**DEBUG***", "Inside onClickAddWineImage");
         //open camera, user takes picture, return with image
         Intent intent = new Intent(this, AndroidCameraApi.class);
         startActivityForResult(intent, NEW_WR_IMAGE);
     }
 
     public void onClickUpdateBarcode(View v) {
+        Log.d("**DEBUG***", "Inside onClickUpdateBarcode");
         Intent intent = new Intent(this, BarcodeScanner.class);
         intent.putExtra("requestCode", UPDATE_BARCODE);
         startActivityForResult(intent, UPDATE_BARCODE);
+    }
+    public void onClickAddCharacteristics(View v) {
+        Log.d("**DEBUG***", "Inside onClickAddCharacteristics");
+        //set up dialog
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.fragment_characteristics);
+        dialog.setTitle("Characteristics");
+        dialog.setCancelable(true);
+        //now that the dialog is set up, it's time to show it
+
+        ScrollView svActiveContainer = dialog.findViewById(R.id.sv_active_char_container);
+        ScrollView svInactiveContainer = dialog.findViewById(R.id.sv_inactive_char_container);
+        com.google.android.flexbox.FlexboxLayout llActiveContainer = svActiveContainer.findViewById(R.id.fb_active_char_container);
+        com.google.android.flexbox.FlexboxLayout fbInactiveContainer = svInactiveContainer.findViewById(R.id.fb_inactive_char_container);
+        LayoutInflater inflater = LayoutInflater.from(this);
+
+        for(String str : characteristicsArrayList) {
+            Log.d("***DEBUG***", "char: " + str);
+
+            View inactiveChar = inflater.inflate(R.layout.characteristic_inactive, fbInactiveContainer, false);
+
+            CardView cvContainer = inactiveChar.findViewById(R.id.cv_char_container);
+            TextView charText = cvContainer.findViewById(R.id.tv_char_text);
+            charText.setText(str);
+            fbInactiveContainer.addView(inactiveChar);
+        }
+
+        dialog.show();
+    }
+
+    public void onClickAddCharacteristic(View v) {
+        Log.d("**DEBUG***", "Inside onClickAddCharacteristic");
+        //add the char to active
+    }
+
+    public void onClickRemoveCharacteristic(View v) {
+        Log.d("**DEBUG***", "Inside onClickRemoveCharacteristic");
+        //remove from active, move to inactive
     }
 
     @Override
@@ -388,6 +439,10 @@ public class NewWineEntryActivity extends AppCompatActivity {
 
     public void searchAppDatabase(String barcode) {
         dbh.searchReviewsByBarcode(fs, this, barcode);
+    }
+
+    public void setCharacteristicsArrayList(ArrayList<String> charsArrayList) {
+        this.characteristicsArrayList = charsArrayList;
     }
 
 }
