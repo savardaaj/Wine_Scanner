@@ -41,6 +41,8 @@ public class NewWineEntryActivity extends AppCompatActivity {
     };
 
     ArrayList<String> characteristicsArrayList;
+    ArrayList<String> inactiveCharacteristicsArrayList;
+    ArrayList<String> activeCharacteristicsArrayList;
 
 
     boolean isNewEntry = false;
@@ -288,6 +290,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
             newWineReview.barcode = txtBarcode.getText().toString().replaceAll("[^0-9]", "");
             newWineReview.rating = wineRating.getRating();
             newWineReview.shareReview = cbShareReview.isChecked();
+            newWineReview.characteristics = activeCharacteristicsArrayList;
 
             //Add more wines in future
             if(newWineReview.name.equals("")) {
@@ -382,11 +385,16 @@ public class NewWineEntryActivity extends AppCompatActivity {
     public void onClickAddCharacteristic(View v) {
         Log.d("**DEBUG***", "Inside onClickAddCharacteristic");
         //add the char to active
+        TextView name = findViewById(R.id.tv_char_text);
+        activeCharacteristicsArrayList.add(name.getText().toString());
+        
+        //redraw active and inactive boxes. possible to only redraw that single element?
     }
 
     public void onClickRemoveCharacteristic(View v) {
         Log.d("**DEBUG***", "Inside onClickRemoveCharacteristic");
         //remove from active, move to inactive
+        //redraw active and inactive boxes
     }
 
     @Override

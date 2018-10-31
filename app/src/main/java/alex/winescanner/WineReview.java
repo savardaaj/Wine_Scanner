@@ -24,6 +24,7 @@ public class WineReview {
     public String userUUID;
     public String barcode;
     public boolean shareReview;
+    public ArrayList<String> characteristics;
     public ArrayList<String> likes;
     public int avgRating;
     public int ratingCount;
