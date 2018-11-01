@@ -13,6 +13,8 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -83,6 +85,9 @@ public class NewWineEntryActivity extends AppCompatActivity {
         textView.setAdapter(adapter);
 
         newWineReview = new WineReview();
+        characteristicsArrayList = new ArrayList<>();
+        activeCharacteristicsArrayList = new ArrayList<>();
+        inactiveCharacteristicsArrayList = new ArrayList<>();
 
         cl = findViewById(R.id.cl_new_wine_entry);
         txtWineName = cl.findViewById(R.id.txtWineName);
@@ -364,7 +369,7 @@ public class NewWineEntryActivity extends AppCompatActivity {
 
         ScrollView svActiveContainer = dialog.findViewById(R.id.sv_active_char_container);
         ScrollView svInactiveContainer = dialog.findViewById(R.id.sv_inactive_char_container);
-        com.google.android.flexbox.FlexboxLayout llActiveContainer = svActiveContainer.findViewById(R.id.fb_active_char_container);
+        com.google.android.flexbox.FlexboxLayout fbActiveContainer = svActiveContainer.findViewById(R.id.fb_active_char_container);
         com.google.android.flexbox.FlexboxLayout fbInactiveContainer = svInactiveContainer.findViewById(R.id.fb_inactive_char_container);
         LayoutInflater inflater = LayoutInflater.from(this);
 
@@ -382,19 +387,111 @@ public class NewWineEntryActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    //Remove from inactive and add to active
     public void onClickAddCharacteristic(View v) {
         Log.d("**DEBUG***", "Inside onClickAddCharacteristic");
         //add the char to active
-        TextView name = findViewById(R.id.tv_char_text);
+        View root = v.getRootView();
+        TextView name = v.findViewById(R.id.tv_char_text);
         activeCharacteristicsArrayList.add(name.getText().toString());
-        
+
+        inactiveCharacteristicsArrayList.remove(name.getText().toString());
+
         //redraw active and inactive boxes. possible to only redraw that single element?
+
+        addActiveCharacteristic(root, name.getText().toString());
+
+        ((ViewGroup) v.getParent()).removeView(v);
+        //redrawActiveCharacteristics(root);
+        //redrawInactiveCharacteristics(root);
     }
 
+    //remove from active and add to inactive
     public void onClickRemoveCharacteristic(View v) {
         Log.d("**DEBUG***", "Inside onClickRemoveCharacteristic");
         //remove from active, move to inactive
-        //redraw active and inactive boxes
+        View root = v.getRootView();
+        View card = (View) v.getParent().getParent();
+
+        //View cl = v.findViewById(R.id.cl_char_container);
+        TextView name = card.findViewById(R.id.tv_char_text);
+
+        inactiveCharacteristicsArrayList.add(name.getText().toString());
+        activeCharacteristicsArrayList.remove(name.getText().toString());
+
+        removeActiveCharacteristic(root, name.getText().toString());
+
+        ((ViewGroup) card.getParent()).removeView(card);
+        //redrawActiveCharacteristics(root);
+        //redrawInactiveCharacteristics(root);
+    }
+
+    public void addActiveCharacteristic(View root, String str) {
+        Log.d("***DEBUG***", "inside addActiveCharacteristic");
+
+        ScrollView svActiveContainer = root.findViewById(R.id.sv_active_char_container);
+
+        com.google.android.flexbox.FlexboxLayout fbActiveContainer = svActiveContainer.findViewById(R.id.fb_active_char_container);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View activeChar = inflater.inflate(R.layout.characteristic_active, fbActiveContainer, false);
+
+        CardView cvContainer = activeChar.findViewById(R.id.cv_char_container);
+        TextView charText = cvContainer.findViewById(R.id.tv_char_text);
+        charText.setText(str);
+        fbActiveContainer.addView(activeChar);
+    }
+
+    public void removeActiveCharacteristic(View root, String str) {
+        Log.d("***DEBUG***", "inside addActiveCharacteristic");
+
+        ScrollView svInactiveContainer = root.findViewById(R.id.sv_inactive_char_container);
+
+        com.google.android.flexbox.FlexboxLayout fbInactiveContainer = svInactiveContainer.findViewById(R.id.fb_inactive_char_container);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View inactiveChar = inflater.inflate(R.layout.characteristic_inactive, fbInactiveContainer, false);
+
+        CardView cvContainer = inactiveChar.findViewById(R.id.cv_char_container);
+        TextView charText = cvContainer.findViewById(R.id.tv_char_text);
+        charText.setText(str);
+        fbInactiveContainer.addView(inactiveChar);
+    }
+
+    public void redrawActiveCharacteristics(View v) {
+        Log.d("***DEBUG***", "inside redrawActiveCharacteristics");
+        LayoutInflater inflater = LayoutInflater.from(this);
+        ScrollView svActiveContainer = v.findViewById(R.id.sv_active_char_container);
+
+        com.google.android.flexbox.FlexboxLayout fbActiveContainer = svActiveContainer.findViewById(R.id.fb_active_char_container);
+
+        fbActiveContainer.removeAllViews();
+        for(String str : activeCharacteristicsArrayList) {
+            Log.d("***DEBUG***", "active chars: " + str);
+            View activeChar = inflater.inflate(R.layout.characteristic_active, fbActiveContainer, false);
+
+            CardView cvContainer = activeChar.findViewById(R.id.cv_char_container);
+            TextView charText = cvContainer.findViewById(R.id.tv_char_text);
+            charText.setText(str);
+            fbActiveContainer.addView(activeChar);
+        }
+    }
+
+    public void redrawInactiveCharacteristics(View v) {
+        Log.d("***DEBUG***", "inside redrawInactiveCharacteristics");
+        LayoutInflater inflater = LayoutInflater.from(this);
+        ScrollView svInactiveContainer = v.findViewById(R.id.sv_inactive_char_container);
+
+        com.google.android.flexbox.FlexboxLayout fbInactiveContainer = svInactiveContainer.findViewById(R.id.fb_inactive_char_container);
+
+        fbInactiveContainer.removeAllViews();
+        for(String str : inactiveCharacteristicsArrayList) {
+            Log.d("***DEBUG***", "inactive chars: " + str);
+            View inactiveChar = inflater.inflate(R.layout.characteristic_inactive, fbInactiveContainer, false);
+
+            CardView cvContainer = inactiveChar.findViewById(R.id.cv_char_container);
+            TextView charText = cvContainer.findViewById(R.id.tv_char_text);
+            charText.setText(str);
+            fbInactiveContainer.addView(inactiveChar);
+        }
     }
 
     @Override
@@ -452,5 +549,6 @@ public class NewWineEntryActivity extends AppCompatActivity {
     public void setCharacteristicsArrayList(ArrayList<String> charsArrayList) {
         this.characteristicsArrayList = charsArrayList;
     }
+
 
 }
