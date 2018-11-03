@@ -2,14 +2,14 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cl_characteristic_active"
+    android:id="@+id/cl_characteristic_view"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cv_char_container"
         android:layout_width="wrap_content"
-        android:layout_height="29dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="2dp"
@@ -43,20 +43,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
-            <TextView
-                android:id="@+id/tv_char_remove"
-                android:layout_width="31dp"
-                android:layout_height="28dp"
-                android:onClick="onClickRemoveCharacteristic"
-                android:text="X"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tv_char_text"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
 
         </android.support.constraint.ConstraintLayout>
 

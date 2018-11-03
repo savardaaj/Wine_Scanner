@@ -2,17 +2,15 @@ package alex.winescanner;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewManager;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -24,18 +22,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class CardDetailsActivity extends AppCompatActivity {
 
@@ -55,7 +50,10 @@ public class CardDetailsActivity extends AppCompatActivity {
     EditText txtWineBarcode;
     EditText txtWineDescription;
     EditText txtLikeDescription;
+    TextView txtNotableChars;
+    TextView tvRatingsCount;
     CheckBox cbIsShared;
+    CheckBox cbIsSharedNotableChar;
 
     ImageView ivWineImage;
     ImageView ivPlaceholderAdd;
@@ -64,7 +62,8 @@ public class CardDetailsActivity extends AppCompatActivity {
 
     boolean ratingsShowing = false;
 
-    RatingBar wineRating;
+    RatingBar rbWineRating;
+    RatingBar rbUserRating;
 
     private StorageReference storageRef;
     FirebaseFirestore fs;
@@ -92,6 +91,7 @@ public class CardDetailsActivity extends AppCompatActivity {
                 String JSON = extras.getString("details");
                 wr = new Gson().fromJson(JSON, WineReview.class);
                 loadWineReview(wr);
+                drawChosenCharacteristics(wr);
             }
         }
         getComments(wr);
@@ -110,10 +110,23 @@ public class CardDetailsActivity extends AppCompatActivity {
             txtWineBarcode = cl.findViewById(R.id.txt_barcode);
             txtWineDescription =  cl.findViewById(R.id.txtWineDescription);
             txtLikeDescription = cl.findViewById(R.id.txt_like_description);
-            wineRating =  cl.findViewById(R.id.rb_main_card_details);
+            rbWineRating =  cl.findViewById(R.id.rb_details_community);
+            rbUserRating = cl.findViewById(R.id.rb_user_rating);
             ivWineImage = cl.findViewById(R.id.iv_wine_picture);
             cbIsShared = cl.findViewById(R.id.cb_carddetails_isshared);
+            txtNotableChars = cl.findViewById(R.id.tv_notable_char_placeholder);
+            cbIsSharedNotableChar = cl.findViewById(R.id.cb_isshared_notablechars);
             cbIsShared.setTypeface(ResourcesCompat.getFont(this, R.font.comfortaa_light));
+            cbIsSharedNotableChar.setTypeface(ResourcesCompat.getFont(this, R.font.comfortaa_light));
+            tvRatingsCount = cl.findViewById(R.id.tv_ratings_count);
+
+            rbWineRating.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    view.performClick();
+                    return false;
+                }
+            });
 
             //populate form from existing data
             txtWineName.setText(wr.name);
@@ -122,6 +135,9 @@ public class CardDetailsActivity extends AppCompatActivity {
             txtWineYear.setText(wr.year);
             txtWineLocation.setText(wr.location);
             cbIsShared.setChecked(wr.shareReview);
+            cbIsSharedNotableChar.setChecked(wr.shareCharacteristics);
+
+
 
             if(cbIsShared.isChecked()) {
                 if(wr.likes.size() == 0) {
@@ -141,12 +157,16 @@ public class CardDetailsActivity extends AppCompatActivity {
                 txtLikeDescription.setVisibility(View.INVISIBLE);
             }
 
+            if(wr.characteristics.size() > 0) {
+                txtNotableChars.setVisibility(View.GONE);
+            }
+            else { txtNotableChars.setVisibility(View.VISIBLE); }
 
             String barcode = "[" + wr.barcode + "]";
             txtWineBarcode.setText(barcode);
             txtWineDescription.setText(wr.description);
-            wineRating.setRating(wr.rating);
-
+            rbWineRating.setRating(wr.rating);
+            rbUserRating.setRating(wr.rating);
 
             if(wr.imageBitmap != null) {
                 ivWineImage.setImageBitmap(wr.imageBitmap);
@@ -156,7 +176,7 @@ public class CardDetailsActivity extends AppCompatActivity {
         }
         catch(Exception e) {
             Log.d("**ERROR**",": " + e.getMessage());
-            Toast.makeText(this, "An Error Occurred", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "An Error Occurred in CardDetailsActivity", Toast.LENGTH_LONG).show();
             //return to menu_library
 
             Intent intent = new Intent(this, LibraryActivity.class);
@@ -169,7 +189,6 @@ public class CardDetailsActivity extends AppCompatActivity {
         //query all reviews with the same barcode
 
         dbh.queryWineReviews(fs, this, wr);
-        //Create a card for each one
     }
 
     public void populateRatingsBreakdown() {
@@ -201,26 +220,36 @@ public class CardDetailsActivity extends AppCompatActivity {
         float count1 = 0;
 
         float totalReviews = commentsArrayList.size();
+        float totalRating = 0;
 
         for(WineReview comment : commentsArrayList) {
             if(comment.rating == 5) {
                 count5++;
+                totalRating += 5;
             }
             else if(comment.rating == 4) {
                 count4++;
+                totalRating += 4;
             }
             else if(comment.rating == 3) {
                 count3++;
+                totalRating += 3;
             }
             else if(comment.rating == 2) {
                 count2++;
+                totalRating += 2;
             }
             else if(comment.rating == 1) {
                 count1++;
+                totalRating += 1;
             }
         }
 
-        Log.d("***DEBUG***", "Counts" + count2);
+        totalRating = totalRating/totalReviews;
+
+        rbWineRating.setRating(totalRating);
+        String text = "(" + (int)totalReviews + ")";
+        tvRatingsCount.setText(text);
 
         if(count5 != 0) {
             fiveStarPercent = (1 / (totalReviews / count5)) * 100;
@@ -257,12 +286,10 @@ public class CardDetailsActivity extends AppCompatActivity {
         tvSub1.setText(c1);
     }
 
-    public void onClickToggleRatings(View vew) {
+    public void onClickToggleRatings(View view) {
         Log.d("***Debug***", "inside onClickToggleRatings");
 
         final ConstraintLayout ratingsContainer = findViewById(R.id.new_wine_entry_ratings_container);
-        //txtWineDescription
-
 
         if(ratingsShowing) {
 
@@ -413,8 +440,23 @@ public class CardDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void updateComment(WineReview cm) {
+    //draws what the user has chosen for characteristics
+    public void drawChosenCharacteristics(WineReview wr) {
+        Log.d("***DEBUG***", "inside drawChosenCharacteristics");
 
+        LayoutInflater inflater = LayoutInflater.from(this);
+        com.google.android.flexbox.FlexboxLayout fbChosenContainer = this.findViewById(R.id.fb_chosen_char_container);
+        fbChosenContainer.removeAllViews();
+
+        //Display all active
+        for(Map.Entry<String,String> str : wr.characteristics.entrySet()) {
+            View activeChar = inflater.inflate(R.layout.characteristic_view, fbChosenContainer, false);
+
+            CardView cvContainer = activeChar.findViewById(R.id.cv_char_container);
+            TextView charText = cvContainer.findViewById(R.id.tv_char_text);
+            charText.setText(str.getValue());
+            fbChosenContainer.addView(activeChar);
+        }
     }
 
 }

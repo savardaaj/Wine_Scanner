@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class WineReview {
@@ -24,9 +26,10 @@ public class WineReview {
     public String userUUID;
     public String barcode;
     public boolean shareReview;
-    public ArrayList<String> characteristics;
+    public boolean shareCharacteristics;
+    public Map<String, String> characteristics;
     public ArrayList<String> likes;
-    public int avgRating;
+    public float avgRating;
     public int ratingCount;
 
     WineReview() {
@@ -45,9 +48,11 @@ public class WineReview {
         this.userUUID = "";
         this.barcode = "";
         this.shareReview = false;
+        this.shareCharacteristics = false;
         this.likes = new ArrayList<>();
         this.avgRating = 0;
         this.ratingCount = 0;
+        this.characteristics = new HashMap<>();
     }
 
     public String getId() {

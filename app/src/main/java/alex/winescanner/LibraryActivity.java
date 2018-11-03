@@ -175,6 +175,7 @@ public class LibraryActivity extends AppCompatActivity
                             //call newwineentry
                             Intent i = new Intent(this, NewWineEntryActivity.class);
                             i.putExtra("barcodeWine", bcWine);
+                            i.putExtra("userData", user);
                             startActivityForResult(i, NEW_WR);
                         }
                     }
@@ -507,6 +508,7 @@ public class LibraryActivity extends AppCompatActivity
                     String wineReviewJSON = gson.toJson(wr);
                     Intent intent = new Intent(this, NewWineEntryActivity.class);
                     intent.putExtra("edit", wineReviewJSON);
+                    intent.putExtra("userData", user);
                     startActivityForResult(intent, EDIT_WR);
                 }
             }
@@ -557,7 +559,7 @@ public class LibraryActivity extends AppCompatActivity
 
         if(list != null) {
             wr.ratingCount = list.size();
-            int temp = 0;
+            float temp = 0;
             for(WineReview w : list) {
                 temp += w.rating;
             }
@@ -566,7 +568,6 @@ public class LibraryActivity extends AppCompatActivity
 
         //redraw the specific review
         updateWineCardView(wr);
-
     }
 
     public void updateWineCardView(WineReview wr) {

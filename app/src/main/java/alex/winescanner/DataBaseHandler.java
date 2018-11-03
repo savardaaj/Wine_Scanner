@@ -17,7 +17,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static android.support.constraint.Constraints.TAG;
@@ -46,10 +45,12 @@ public class DataBaseHandler {
         wineReviewMap.put("location", wr.location);
         wineReviewMap.put("description", wr.description);
         wineReviewMap.put("shareReview", wr.shareReview);
+        wineReviewMap.put("shareCharacteristics", wr.shareCharacteristics);
         wineReviewMap.put("pictureFilePath", wr.pictureFilePath);
         wineReviewMap.put("imageURL", wr.imageURL);
         wineReviewMap.put("rating", wr.rating);
         wineReviewMap.put("likes", wr.likes);
+        wineReviewMap.put("characteristics", wr.characteristics);
 
         // Add a new document with a generated ID
         db.collection("WineReviews")
@@ -148,11 +149,13 @@ public class DataBaseHandler {
             wineReviewMap.put("location", wr.location);
             wineReviewMap.put("description", wr.description);
             wineReviewMap.put("shareReview", wr.shareReview);
+            wineReviewMap.put("shareCharacteristics", wr.shareCharacteristics);
             wineReviewMap.put("pictureFilePath", wr.pictureFilePath);
             wineReviewMap.put("imageURL", wr.imageURL);
             wineReviewMap.put("rating", wr.rating);
             wineReviewMap.put("docId", wr.docId);
             wineReviewMap.put("likes", wr.likes);
+            wineReviewMap.put("characteristics", wr.characteristics);
 
             // Add a new document with a generated ID
             db.collection("WineReviews").document(wr.docId)
@@ -301,18 +304,49 @@ public class DataBaseHandler {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                ArrayList<String> charsArrayList = new ArrayList<>();
+                                Map<String,String> charsMap = new HashMap<>();
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     Log.d("***DEBUG***", document.getId() + " => " + document.getData());
                                     String characteristic = document.getString("name");
-                                    charsArrayList.add(characteristic);
+                                    charsMap.put(document.getId(), characteristic);
                                 }
-                                nwa.setCharacteristicsArrayList(charsArrayList);
+                                nwa.setCharacteristicsMap(charsMap);
                             } else {
                                 Log.d("***ERROR***", "Error getting documents.", task.getException());
                             }
                         }
                     });
+    }
+
+    public void getWineCharacteristics(FirebaseFirestore db, String upc, final Context context) {
+        Log.d("***Debug***", "inside getWineCharacteristics");
+
+        final NewWineEntryActivity nwa = (NewWineEntryActivity) context;
+        db.collection("WineReviews").whereEqualTo("barcode", upc)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            Map<String,String> charsMap = new HashMap<>();
+                            //Should be only 1 result, so doesn't matter about the loop in loop
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Map<String,String> chars = (Map<String,String>) document.get("characteristics");
+                                if(chars != null) {
+                                    for (Map.Entry<String, String> entry : chars.entrySet()) {
+
+                                        charsMap.put(entry.getKey(), entry.getValue());
+                                    }
+                                    nwa.setUserCharacteristicsMap(charsMap);
+                                }
+
+                            }
+
+                        } else {
+                            Log.d("***ERROR***", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
     }
 
 }

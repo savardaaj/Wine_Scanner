@@ -117,7 +117,7 @@ public class ReviewSelectionScreen extends AppCompatActivity {
 
             //set values of imported components
             wineName.setText((br.title + " - " + br.brand));
-            //wineRating.setRating();
+            //rbWineRating.setRating();
             wineDesc.setText(br.description);
 
             shareReview.setVisibility(View.INVISIBLE);

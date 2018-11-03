@@ -127,6 +127,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.d("***DEBUG***", "Inside onClickLogin");
 
         cvLogin.setClickable(false);
+        cvLogin.setCardBackgroundColor(getResources().getColor(R.color.colorDarkerAccent, getTheme()));
 
         signOutGoogle();
         signOutFacebook();

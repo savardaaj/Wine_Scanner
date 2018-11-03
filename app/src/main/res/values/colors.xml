@@ -8,4 +8,5 @@
     <color name="colorGreenButton">#41876a</color>
     <color name="colorModalBox2">#818181</color>
     <color name="secondary_text">#FFBE006B</color>
+    <color name="colorDarkerAccent">#a42953</color>
 </resources>

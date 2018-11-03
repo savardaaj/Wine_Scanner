@@ -29,7 +29,7 @@
     <string name="wine_points">84 pts</string>
     <string name="ratings_count">(15)</string>
     <string name="more">More</string>
-    <string name="title_activity_library">LibraryActivity</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -41,8 +41,9 @@
 
     <string name="nav_library">Library</string>
     <string name="removed">Removed</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_card_details">CardDetails</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_card_details">Details</string>
+    <string name="title_activity_library">Library</string>
     <string name="btn_save">Save</string>
 
     <string name="web_client_id">117605382604-qntbd7fi42anu4180b2saq8h2db5rl6j.apps.googleusercontent.com</string>
