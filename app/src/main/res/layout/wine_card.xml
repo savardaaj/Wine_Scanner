@@ -97,46 +97,6 @@
         app:layout_constraintVertical_bias="0.614" />
 
     <TextView
-        android:id="@+id/tvChoose"
-        android:layout_width="57dp"
-        android:layout_height="22dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="@color/colorAccent"
-        android:elevation="30dp"
-        android:fontFamily="@font/comfortaa_light"
-        android:text="@string/choose"
-        android:textColor="@color/colorGreenButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
-        android:id="@+id/tvEdit"
-        android:layout_width="60dp"
-        android:layout_height="22dp"
-        android:layout_alignStart="@+id/tvWineName"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:backgroundTint="@color/colorAccent"
-        android:elevation="30dp"
-        android:fontFamily="@font/comfortaa_light"
-        android:onClick="onClickWineCardEdit"
-        android:text="@string/edit"
-        android:textColor="@color/colorGreenButton"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.033"
-        app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:text="    Edit" />
-
-    <TextView
         android:id="@+id/tvWine_Source"
         android:layout_width="111dp"
         android:layout_height="wrap_content"
@@ -220,5 +180,75 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.65"
         app:srcCompat="@drawable/ic_share" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardView"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        app:cardBackgroundColor="@color/colorGreenButton"
+        app:cardCornerRadius="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.02"
+        app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
+        app:layout_constraintTop_toBottomOf="@+id/tvWine_Desc"
+        app:layout_constraintVertical_bias="0.88">
+
+        <TextView
+            android:id="@+id/tvEdit"
+            android:layout_width="60dp"
+            android:layout_height="22dp"
+            android:layout_alignStart="@+id/tvWineName"
+            android:layout_alignParentTop="true"
+            android:backgroundTint="@color/colorAccent"
+            android:elevation="30dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:onClick="onClickWineCardEdit"
+            android:text="@string/edit"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.033"
+            app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            tools:text="    Edit" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        app:cardBackgroundColor="@color/colorGreenButton"
+        app:cardCornerRadius="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/tvWine_Desc"
+        app:layout_constraintVertical_bias="0.846">
+
+        <TextView
+            android:id="@+id/tvEdit2"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:layout_alignStart="@+id/tvWineName"
+            android:layout_alignParentTop="true"
+            android:backgroundTint="@color/colorAccent"
+            android:elevation="30dp"
+            android:fontFamily="@font/comfortaa_light"
+            android:onClick="onClickWineCardEdit"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="@string/choose"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.033"
+            app:layout_constraintStart_toEndOf="@+id/ivWine_Picture"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+    </android.support.v7.widget.CardView>
 
 </android.support.constraint.ConstraintLayout>
